@@ -10,7 +10,7 @@ const Contact = () => {
     setResult("Sending....");
     const formData = new FormData(event.target);
 
-    formData.append("access_key", "7e6dc462-9d76-42ec-83fc-beedf5594eab");
+    formData.append("access_key", "62c39f50-6078-4d70-b887-8ce22140cabd");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -46,7 +46,7 @@ const Contact = () => {
                 <span>Send us a message</span>
               </h3>
               <p className="text-gray-400 leading-relaxed">
-                We're here to help and answer any questions you might have. We
+                We are here to help and answer any questions you might have. We
                 look forward to hearing from you!
               </p>
               <ul className="space-y-6">
@@ -71,9 +71,9 @@ const Contact = () => {
                   <div>
                     <p className="font-medium">Address</p>
                     <p className="text-gray-400">
-                      Mukharjee Nagar Delhi 
+                      Mukharjee Nagar Delhi
                       <br />
-                      Delhi 
+                      Delhi
                     </p>
                   </div>
                 </li>

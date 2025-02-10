@@ -71,9 +71,9 @@ const Contact = () => {
                   <div>
                     <p className="font-medium">Address</p>
                     <p className="text-gray-400">
-                      Plot no.10, Phase 1 Industrial Area
+                      Mukharjee Nagar Delhi 
                       <br />
-                      Gwalthai, Bilaspur (HP)
+                      Delhi 
                     </p>
                   </div>
                 </li>

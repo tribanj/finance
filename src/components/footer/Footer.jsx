@@ -27,7 +27,7 @@ const Footer = () => {
               {["Home", "About", "Contact"].map((link) => (
                 <li key={link}>
                   <a
-                    href="#"
+                    href="/"
                     className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
                   >
                     {link}

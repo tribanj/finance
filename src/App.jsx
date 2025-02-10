@@ -1,16 +1,45 @@
-// import { useState } from 'react'
-import "./App.css";
-import HomePage from "./components/pages/home/Hompage";
-import Navbar from "./components/nav/Navbar";
-import Carousel from "./components/pages/home/Cerausel";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './components/pages/home/Hompage';
+import Navbar from './components/nav/Navbar';
+import Carousel from './components/pages/home/Cerausel';
+import Footer from './components/footer/Footer';
+import About from './components/pages/about/About'; // Create this component
+import Contact from './components/pages/contact/Contact'; // Create this component
+import NotFound from './components/pages/NotFound.jsx'; // Optional: Create this component
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <Carousel />
-      <HomePage />
-    </>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        
+        <main className="flex-grow">
+          <Routes>
+            {/* Home Route */}
+            <Route 
+              path="/" 
+              element={
+                <>
+                  <Carousel />
+                  <HomePage />
+                </>
+              } 
+            />
+            
+            {/* About Route */}
+            <Route path="/about" element={<About />} />
+            
+            {/* Contact Route */}
+            <Route path="/contact" element={<Contact />} />
+            
+            {/* 404 Route - Optional */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

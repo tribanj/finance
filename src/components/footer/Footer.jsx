@@ -1,4 +1,6 @@
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import Logo from "../Logo";
 
 const Footer = () => {
   return (
@@ -9,7 +11,7 @@ const Footer = () => {
           <div className="flex-1 space-y-4">
             <div className="flex items-center">
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                Life Comrade MicroFinserve
+               <Logo />
               </span>
             </div>
             <p className="text-sm max-w-xs text-gray-400">
@@ -24,16 +26,30 @@ const Footer = () => {
               Quick Links
             </h3>
             <ul className="space-y-3">
-              {["Home", "About", "Contact"].map((link) => (
-                <li key={link}>
-                  <a
-                    href="/"
-                    className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link
+                  to="/"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -43,16 +59,21 @@ const Footer = () => {
               Legal
             </h3>
             <ul className="space-y-3">
-              {["FAQ", "Terms & Conditions", "Privacy Policy"].map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link to="/faq" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -66,7 +87,7 @@ const Footer = () => {
                 { icon: <FaFacebook />, label: "Facebook" },
                 { icon: <FaTwitter />, label: "Twitter" },
                 { icon: <FaInstagram />, label: "Instagram" },
-                { icon: <FaLinkedin />, label: "LinkedIn" },
+                { icon: <FaLinkedin />, label: "LinkedIn" }
               ].map((social, index) => (
                 <a
                   key={index}

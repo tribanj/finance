@@ -6,6 +6,7 @@ import Footer from './components/footer/Footer';
 import About from './components/pages/about/About'; // Create this component
 import Contact from './components/pages/contact/Contact'; // Create this component
 import NotFound from './components/pages/NotFound.jsx'; // Optional: Create this component
+import FaQ from './components/pages/FaQ.jsx';
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
             
             {/* Contact Route */}
             <Route path="/contact" element={<Contact />} />
+
+            <Route path="/faq" element={<FaQ />} />
             
             {/* 404 Route - Optional */}
             <Route path="*" element={<NotFound />} />

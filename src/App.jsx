@@ -7,6 +7,7 @@ import About from './components/pages/about/About'; // Create this component
 import Contact from './components/pages/contact/Contact'; // Create this component
 import NotFound from './components/pages/NotFound.jsx'; // Optional: Create this component
 import FaQ from './components/pages/FaQ.jsx';
+import PrivacyPolicy from './components/pages/PrvacyPolicy.jsx';
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
 
             <Route path="/faq" element={<FaQ />} />
+
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             
             {/* 404 Route - Optional */}
             <Route path="*" element={<NotFound />} />

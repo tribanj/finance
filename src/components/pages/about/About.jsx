@@ -24,13 +24,13 @@ const About = () => {
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-amber-700">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Mission</h2>
-          <p className="text-lg text-gray-300">
+          <p className="text-lg text-gray-300 ">
             Our mission is to empower individuals and businesses by providing financial solutions that enhance growth and stability, ensuring a brighter future for our clients.
           </p>
         </div>
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-amber-700">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Vision</h2>
           <p className="text-lg text-gray-300">
             Our vision is to be the leading financial partner for individuals and businesses, fostering a world where financial support is accessible, transparent, and reliable for all.

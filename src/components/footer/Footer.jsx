@@ -70,7 +70,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
                   Privacy Policy
                 </Link>
               </li>
@@ -91,7 +91,7 @@ const Footer = () => {
               ].map((social, index) => (
                 <a
                   key={index}
-                  href="#"
+                  href="https://www.instagram.com/lc_microfiserv?igsh=cXVyNGVjcWg3ZG56"
                   className="text-gray-400 hover:text-cyan-400 transition-colors"
                   aria-label={social.label}
                 >

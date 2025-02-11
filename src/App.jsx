@@ -10,6 +10,7 @@ import FaQ from './components/pages/FaQ.jsx';
 import PrivacyPolicy from './components/pages/PrvacyPolicy.jsx';
 import Signup from './components/auth/Signup.jsx';
 import Login from './components/auth/Login.jsx';
+import TermsAndConditions from './components/pages/TermsAndCondition.jsx';
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
             <Route path="/faq" element={<FaQ />} />
 
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+            <Route path="/terms&condition" element={<TermsAndConditions />} />
             
             {/* 404 Route - Optional */}
             <Route path="*" element={<NotFound />} />

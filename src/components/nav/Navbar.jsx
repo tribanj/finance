@@ -42,9 +42,11 @@ const Navbar = () => {
                 )}
               </Link>
             ))}
-            <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform">
-              Login/Signup
-            </button>
+            <Link to="/login">
+              <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform">
+                Login/Signup
+              </button>
+            </Link>
           </div>
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -80,9 +82,13 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full text-base font-medium hover:scale-105 transition-transform">
+
+            <Link
+              to="/login"
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full text-base font-medium hover:scale-105 transition-transform"
+            >
               Login/Signup
-            </button>
+            </Link>
           </div>
         </div>
       )}

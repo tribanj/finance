@@ -8,6 +8,8 @@ import Contact from './components/pages/contact/Contact'; // Create this compone
 import NotFound from './components/pages/NotFound.jsx'; // Optional: Create this component
 import FaQ from './components/pages/FaQ.jsx';
 import PrivacyPolicy from './components/pages/PrvacyPolicy.jsx';
+import Signup from './components/auth/Signup.jsx';
+import Login from './components/auth/Login.jsx';
 
 function App() {
   return (
@@ -30,6 +32,10 @@ function App() {
             
             {/* About Route */}
             <Route path="/about" element={<About />} />
+
+            <Route path="/signup" element={<Signup />} />
+
+            <Route path="/login" element={<Login />} />
             
             {/* Contact Route */}
             <Route path="/contact" element={<Contact />} />

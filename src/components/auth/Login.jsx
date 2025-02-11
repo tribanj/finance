@@ -49,7 +49,7 @@ const Login = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4">
       <ToastContainer />
 
-      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-8 space-y-6 transform transition-all duration-300 hover:scale-105">
+      <div className="w-full max-w-md bg-slate-700 rounded-xl shadow-2xl p-8 space-y-6 transform transition-all duration-300 hover:scale-105">
         <div className=" items-center flex flex-col">
           <div className="w-32 h-32 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center mb-6">
             <FaUser className="text-white text-6xl" />

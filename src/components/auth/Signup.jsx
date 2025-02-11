@@ -1,5 +1,5 @@
-// import React, { useState } from "react";
-import { signupUser } from "../auth/AuthService";
+import { useState } from "react";
+// import { signupUser } from "../auth/AuthService";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
@@ -57,8 +57,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-8 space-y-6 transform transition-all duration-300 hover:scale-105">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4 mt-20">
+      <div className="w-full max-w-2xl bg-slate-700 rounded-xl shadow-2xl p-8 space-y-6 transform transition-all duration-300 hover:scale-105">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Create Your Account
         </h2>
@@ -114,9 +114,9 @@ const Signup = () => {
               required
             >
               <option value="employer" disabled>
-                Employer
+                User
               </option>
-              <option value="job_seeker">Job Seeker</option>
+              <option value="job_seeker">Admin</option>
             </select>
           </div>
           <div className="relative sm:col-span-2">

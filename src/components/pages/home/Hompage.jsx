@@ -1,16 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import { FaMoneyCheckAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 
 const HomePage = () => {
   useEffect(() => {
     const createNeonCircle = () => {
-      const circle = document.createElement('div');
-      circle.className = 'absolute w-4 h-4 rounded-full blur-lg opacity-30';
+      const circle = document.createElement("div");
+      circle.className = "absolute w-4 h-4 rounded-full blur-lg opacity-30";
       circle.style.left = `${Math.random() * 100}%`;
       circle.style.top = `${Math.random() * 100}%`;
       circle.style.background = `radial-gradient(circle, 
-        ${Math.random() > 0.5 ? '#00f3ff' : '#ff00ff'}, 
+        ${Math.random() > 0.5 ? "#00f3ff" : "#ff00ff"}, 
         transparent)`;
-      document.getElementById('neon-background').appendChild(circle);
+      document.getElementById("neon-background").appendChild(circle);
     };
 
     for (let i = 0; i < 50; i++) {
@@ -21,8 +24,8 @@ const HomePage = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Neon Background */}
-      <div 
-        id="neon-background" 
+      <div
+        id="neon-background"
         className="absolute inset-0 bg-[url('/dark-computer-bg.jpg')] bg-cover bg-center"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-black/70" />
@@ -37,8 +40,8 @@ const HomePage = () => {
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Revolutionize your financial journey with our AI-powered loan solutions and 
-            blockchain-backed security systems.
+            Revolutionize your financial journey with our AI-powered loan
+            solutions and blockchain-backed security systems.
           </p>
 
           {/* CTA Button */}
@@ -54,11 +57,11 @@ const HomePage = () => {
         {/* Stats Grid */}
         <div className="grid md:grid-cols-3 gap-8 mt-24 text-center">
           {[
-            { number: '99.9%', label: 'Security Assurance' },
-            { number: '24h', label: 'Loan Approval' },
-            { number: '1M+', label: 'Happy Customers' }
+            { number: "99.9%", label: "Security Assurance" },
+            { number: "24h", label: "Loan Approval" },
+            { number: "1M+", label: "Happy Customers" },
           ].map((stat, index) => (
-            <div 
+            <div
               key={index}
               className="p-6 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-cyan-400/30 transition-all"
             >
@@ -68,6 +71,23 @@ const HomePage = () => {
               <div className="mt-2 text-gray-400">{stat.label}</div>
             </div>
           ))}
+        </div>
+
+        <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-sm mx-auto text-center border border-gray-800 mt-50">
+          <div className="flex justify-center mb-4">
+            <FaMoneyCheckAlt className="text-5xl text-cyan-400" />
+          </div>
+          <h2 className="text-2xl font-bold">Get Instant Loan</h2>
+          <p className="text-gray-400 mt-2">
+            Apply for an instant loan with minimal paperwork and quick approval.
+            Get the financial support you need today!
+          </p>
+          <Link
+            to="/apply-loan"
+            className="mt-4 inline-block bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
+          >
+            Apply Now
+          </Link>
         </div>
       </div>
 

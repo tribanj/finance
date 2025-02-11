@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom"; // Import routing components
-import logo from "../../assets/logo.png";
 import Logo from "../Logo";
 
 const Navbar = () => {
@@ -11,7 +10,7 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "Contact-Us", path: "/contact" },
   ];
 
   return (

@@ -59,7 +59,7 @@ const HomePage = () => {
           {[
             { number: "99.9%", label: "Security Assurance" },
             { number: "24h", label: "Loan Approval" },
-            { number: "1M+", label: "Happy Customers" },
+            { number: "10K+", label: "Happy Customers" },
           ].map((stat, index) => (
             <div
               key={index}

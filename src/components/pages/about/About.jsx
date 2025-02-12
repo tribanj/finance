@@ -2,7 +2,7 @@ import founderImg from "../../../assets/about foundder.jpeg";
 
 const About = () => {
   return (
-    <div className="min-h-screen pt-20 flex flex-col items-center px-6 md:px-20 bg-gray-900 text-white">
+    <div className="min-h-screen pt-20 flex flex-col items-center px-6 md:px-20 bg-gray-900 text-white m-10">
       <div className="flex flex-col md:flex-row items-center justify-center w-full mb-12">
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl font-bold mb-4">About Us</h1>
@@ -24,16 +24,22 @@ const About = () => {
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-amber-700">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c]">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Mission</h2>
           <p className="text-lg text-gray-300 ">
             Our mission is to empower individuals and businesses by providing financial solutions that enhance growth and stability, ensuring a brighter future for our clients.
           </p>
         </div>
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-amber-700">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c]">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Vision</h2>
           <p className="text-lg text-gray-300">
             Our vision is to be the leading financial partner for individuals and businesses, fostering a world where financial support is accessible, transparent, and reliable for all.
+          </p>
+        </div>
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c] m-auto">
+          <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Goal</h2>
+          <p className="text-lg text-gray-300">
+            Our goal is to provid loans easily and on less intrest rate for all needy persons.
           </p>
         </div>
       </div>

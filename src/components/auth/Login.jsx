@@ -38,7 +38,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      alert("Error in login. Please check your credentials!")
+      alert("Error in login. Please check your credentials!", error.message)
       // toast.error("Error in login. Please check your credentials!", {
       //   position: "top-right",
       // });

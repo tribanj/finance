@@ -13,6 +13,8 @@ import Login from "./components/auth/Login.jsx";
 import TermsAndConditions from "./components/pages/TermsAndCondition.jsx";
 import LoanForm from "./components/pages/LoanForm.jsx";
 import AllLoans from "./components/loans/AllLoans.jsx";
+import PhoneLogin from "./components/auth/PhoneLogin.jsx";
+import Profile from "./components/profile/Profile.jsx";
 
 function App() {
   return (
@@ -20,7 +22,7 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <Navbar />
 
-        <main className="flex-grow mt-10">
+        <main className="flex-grow mt-30">
           <Routes>
             {/* Home Route */}
             <Route
@@ -39,6 +41,11 @@ function App() {
             <Route path="/signup" element={<Signup />} />
 
             <Route path="/login" element={<Login />} />
+
+
+            <Route path="/profile" element={<Profile />} />
+            
+            <Route path="/sign-in-with-mobile" element={<PhoneLogin />} />
 
             {/* Contact Route */}
             <Route path="/contact" element={<Contact />} />

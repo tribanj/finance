@@ -1,9 +1,9 @@
 import { useState } from "react";
-// import { signupUser } from "../auth/AuthService";
+import { auth, db } from "../firebaseConfig";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -13,13 +13,14 @@ const Signup = () => {
     lastName: "",
     email: "",
     password: "",
-    role: "job_seeker",
+    // role is not selectable - default is 'user'
     address: "",
     mobileNumber: "",
     alternativeMobileNumber: "",
     pinCode: "",
-    highestEducation: "",
-    workExperience: "",
+    occupation: "",
+    adharNo: "",
+    panCardNo: "",
     approved: false,
   });
 
@@ -27,32 +28,41 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault();
     try {
-      let waitingNumber = null;
-      if (formData.role === "job_seeker") {
-        waitingNumber = Math.floor(Math.random() * 10) + 30;
-      }
+      // Set role based on hardcoded admin credential
+      const role = formData.email === "admin@lcmf.com" ? "admin" : "user";
 
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      // Update user's display name
+      await updateProfile(userCredential.user, {
+        displayName: `${formData.firstName} ${formData.lastName}`,
+      });
+
+      // Prepare user data for Firestore
       const userData = {
         ...formData,
-        waitingNumber,
+        role,
         createdAt: serverTimestamp(),
       };
 
-      const userCredential = await signupUser(userData);
+      // Save the user data to Firestore if not already present
       const userDocRef = doc(db, "users", userCredential.user.uid);
       const existingUser = await getDoc(userDocRef);
-
       if (!existingUser.exists()) {
         await setDoc(userDocRef, userData);
       }
-      alert("Signup successful!g")
       toast.success("Signup successful!", { position: "top-right" });
-      navigate("/login");
+      navigate("/profile");
     } catch (error) {
-      alert("All Fields Are Mendatory")
-      toast.error("All Fields Are Mendatory", { position: "top-right" });
+      toast.error("Error in signup: " + error.message, { position: "top-right" });
     }
   };
 
@@ -62,7 +72,7 @@ const Signup = () => {
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Create Your Account
         </h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <form onSubmit={handleSignup} className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="relative">
             <input
               name="firstName"
@@ -106,20 +116,6 @@ const Signup = () => {
             />
           </div>
           <div className="relative sm:col-span-2">
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-purple-500 transition-all duration-300"
-              required
-            >
-              <option value="employer" disabled>
-                User
-              </option>
-              <option value="job_seeker">Admin</option>
-            </select>
-          </div>
-          <div className="relative sm:col-span-2">
             <input
               name="address"
               placeholder="Address"
@@ -159,33 +155,45 @@ const Signup = () => {
               required
             />
           </div>
-          <div className="relative">
+          <div className="relative sm:col-span-2">
             <input
-              name="highestEducation"
-              placeholder="Highest Education"
-              value={formData.highestEducation}
+              name="adharNo"
+              placeholder="Aadhaar Number"
+              value={formData.adharNo}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-purple-500 transition-all duration-300"
               required
             />
           </div>
-          <div className="relative">
+          <div className="relative sm:col-span-2">
             <input
-              name="workExperience"
-              placeholder="Work Experience"
-              value={formData.workExperience}
+              name="panCardNo"
+              placeholder="PAN Card Number"
+              value={formData.panCardNo}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-purple-500 transition-all duration-300"
               required
             />
           </div>
-        </div>
-        <button
-          onClick={handleSignup}
-          className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105"
-        >
-          Signup
-        </button>
+          <div className="relative sm:col-span-2">
+            <input
+              name="occupation"
+              placeholder="Occupation"
+              value={formData.occupation}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-purple-500 transition-all duration-300"
+              required
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105"
+            >
+              Signup
+            </button>
+          </div>
+        </form>
         <p className="text-sm text-center text-gray-500">
           Already have an account?{" "}
           <Link

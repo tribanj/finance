@@ -10,7 +10,7 @@ const About = () => {
             Founder: Ravikant Sharma
           </h3>
           <p className="text-lg text-gray-300 mb-6">
-            Life Comrade MicroFinserve is a leading microfinance company founded
+            <span className=" text-2xl">Life Comrade MicroFinserve</span> is a leading microfinance company founded
             by Ravikant Sharma with the vision of promoting financial inclusion and
             empowering small businesses and individuals. Our goal is to reach
             those who are excluded from traditional financial services and
@@ -50,7 +50,7 @@ const About = () => {
             brighter future for our clients.
           </p>
         </div>
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c]">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-teal-400">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">
             Our Vision
           </h2>
@@ -61,7 +61,7 @@ const About = () => {
             every individual with trust, innovation and transparency.
           </p>
         </div>
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c] m-auto">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-teal-400 m-auto">
           <h2 className="text-3xl font-semibold text-teal-400 mb-4">
             Our Values
           </h2>

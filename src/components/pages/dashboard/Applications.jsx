@@ -1,7 +1,7 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { collection, query } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebaseConfig';
 
 const Applications = () => {
   const [value, loading] = useCollection(query(collection(db, 'applications')));

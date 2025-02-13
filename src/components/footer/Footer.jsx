@@ -91,7 +91,7 @@ const Footer = () => {
               ].map((social, index) => (
                 <a
                   key={index}
-                  href="https://www.instagram.com/lc_microfiserv?igsh=cXVyNGVjcWg3ZG56"
+                  href="https://www.instagram.com/lc_microfinserv?igsh=cXVyNGVjcWg3ZG56"
                   className="text-gray-400 hover:text-cyan-400 transition-colors"
                   aria-label={social.label}
                 >

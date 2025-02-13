@@ -6,40 +6,87 @@ const About = () => {
       <div className="flex flex-col md:flex-row items-center justify-center w-full mb-12">
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl font-bold mb-4">About Us</h1>
-          <h3 className="text-2xl font-semibold text-teal-400 mb-4">Founder: Ravikant Sharma</h3>
+          <h3 className="text-2xl font-semibold text-teal-400 mb-4">
+            Founder: Ravikant Sharma
+          </h3>
           <p className="text-lg text-gray-300 mb-6">
-            We are a trusted finance company providing tailored loan solutions to meet your needs. Our goal is to offer seamless financial services with transparency and efficiency.
+            Life Comrade MicroFinserve is a leading microfinance company founded
+            by Ravikant Sharma with the vision of promoting financial inclusion and
+            empowering small businesses and individuals. Our goal is to reach
+            those who are excluded from traditional financial services and
+            provide them with reliable, transparent, and customized financial
+            solutions.
           </p>
           <p className="text-lg text-gray-300">
-            With years of experience in the industry, we ensure the best rates and services for our customers. Join us today and take a step towards a secure financial future.
+            We are committed to enhancing financial literacy, offering
+            accessible loan services, and fostering sustainable economic growth.
+            With cutting-edge technology and expert guidance, we support our
+            clients in becoming self-reliant and taking their businesses to new
+            heights.
+          </p>
+          <p className="text-lg text-gray-300">
+            We believe that financial independence is a fundamental right for
+            everyone, and we continuously strive to unlock new opportunities for
+            economic growth and development.
           </p>
         </div>
         <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
-          <img 
-            src={founderImg} 
-            alt="Founder" 
-            className="w-full max-w-md rounded-lg shadow-lg" 
+          <img
+            src={founderImg}
+            alt="Founder"
+            className="w-full max-w-md rounded-lg shadow-lg"
           />
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 w-full max-w-5xl">
-        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c]">
-          <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Mission</h2>
+        <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-teal-400 hover:text-green-50">
+          <h2 className="text-3xl font-semibold text-teal-400 mb-4">
+            Our Mission
+          </h2>
           <p className="text-lg text-gray-300 ">
-            Our mission is to empower individuals and businesses by providing financial solutions that enhance growth and stability, ensuring a brighter future for our clients.
+            Our mission is to empower individuals and businesses by providing
+            financial solutions that enhance growth and stability, ensuring a
+            brighter future for our clients.
           </p>
         </div>
         <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c]">
-          <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Vision</h2>
+          <h2 className="text-3xl font-semibold text-teal-400 mb-4">
+            Our Vision
+          </h2>
           <p className="text-lg text-gray-300">
-            Our vision is to be the leading financial partner for individuals and businesses, fostering a world where financial support is accessible, transparent, and reliable for all.
+            We want to build a financial ecosystem that enables businesses and
+            individuals to progress through smart and sustainable financial
+            solutions. Our goal is to make financial services accessible to
+            every individual with trust, innovation and transparency.
           </p>
         </div>
         <div className="p-6 bg-gray-800 rounded-lg shadow-lg text-center hover:bg-[#3b403c] m-auto">
-          <h2 className="text-3xl font-semibold text-teal-400 mb-4">Our Goal</h2>
+          <h2 className="text-3xl font-semibold text-teal-400 mb-4">
+            Our Values
+          </h2>
           <p className="text-lg text-gray-300">
-            Our goal is to provid loans easily and on less intrest rate for all needy persons.
+            <strong>Financial Empowerment:</strong> Enabling small businesses
+            and individuals with accessible financial solutions.
+            <br />
+            <strong>Transparency & Trust:</strong> Ensuring honesty, clarity,
+            and ethical financial practices.
+            <br />
+            <strong>Customer-Centric Approach:</strong>
+            Providing tailored financial services with flexible solutions.
+            <br />
+            <strong>Innovation:</strong>
+            Leveraging technology to enhance financial accessibility and
+            efficiency.
+            <br />
+            <strong> Sustainable Growth:</strong> Promoting responsible lending
+            and long-term financial success.
+            <br />
+            <strong>Inclusive Access:</strong> Serving the unbanked and
+            underserved communities with fair financial opportunities.
+            <br />
+            <strong>Excellence:</strong> Continuously improving our services to
+            deliver the best financial solutions.
           </p>
         </div>
       </div>

@@ -21,11 +21,13 @@ const Divider = () => {
 function AllLoans() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Home Loan Section */}
+      {/* Personal Loan Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-4xl font-bold mb-6">Home Loans</h2>
-          <HomeLoan />
+          <h2 className="text-center text-4xl font-bold mb-6">
+            Personal Loans
+          </h2>
+          <PersonalLoan />
         </div>
       </section>
 
@@ -38,14 +40,13 @@ function AllLoans() {
           <GoldLoan />
         </div>
       </section>
-
       <Divider />
 
-      {/* Personal Loan Section */}
+      {/* Home Loan Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-4xl font-bold mb-6">Personal Loans</h2>
-          <PersonalLoan />
+          <h2 className="text-center text-4xl font-bold mb-6">Home Loans</h2>
+          <HomeLoan />
         </div>
       </section>
     </div>

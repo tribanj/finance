@@ -1,19 +1,20 @@
-/* eslint-disable react/no-unescaped-entities */
 // import React from 'react';
 
-import personalLoanImg from "../../assets/personal loan.jpg"
+import goldloanimg from "../../../assets/gold-lone.avif";
 
-function PersonalLoan() {
+function GoldLoan() {
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row items-center justify-between p-8">
         <div className="w-full md:w-1/2 space-y-6">
           <h1 className="text-5xl md:text-6xl font-bold animate-fadeIn">
-            Personal Loans Made Simple
+            Unlock the Value of Your Gold
           </h1>
           <p className="text-lg md:text-xl text-gray-300 animate-fadeIn delay-100">
-            Get quick and hassle-free access to funds for your personal needs—whether it's education, medical expenses, travel, or unexpected emergencies.
+            Secure a quick loan against your gold assets with flexible terms and
+            competitive rates. Our gold loans provide a hassle-free way to
+            access funds without selling your precious metals.
           </p>
           <div className="flex space-x-4 animate-fadeIn delay-200">
             <a
@@ -32,8 +33,8 @@ function PersonalLoan() {
         </div>
         <div className="w-full md:w-1/2 mt-8 md:mt-0 flex justify-center animate-pulse">
           <img
-            src={personalLoanImg}  
-            alt="Personal Loan"
+            src={goldloanimg} // Ensure this image exists in your public/assets folder
+            alt="Gold Loan"
             className="max-w-md rounded-lg shadow-2xl"
           />
         </div>
@@ -42,22 +43,23 @@ function PersonalLoan() {
       {/* Features Section */}
       <section className="py-12 bg-gray-800">
         <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-gray-700 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:bg-[#3b403c] transition duration-300">
-            <h3 className="text-2xl font-bold mb-2">No Collateral Required</h3>
+          <div className="bg-gray-700 p-6 rounded-lg shadow-lg transform hover:scale-105  hover:bg-[#3b403c] transition duration-300">
+            <h3 className="text-2xl font-bold mb-2">Secure Financing</h3>
             <p className="text-gray-300">
-              Enjoy the freedom of unsecured personal loans with minimal documentation.
+              Leverage your gold assets securely and efficiently.
             </p>
           </div>
           <div className="bg-gray-700 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:bg-[#3b403c] transition duration-300">
-            <h3 className="text-2xl font-bold mb-2">Flexible Repayment Options</h3>
+            <h3 className="text-2xl font-bold mb-2">Quick Approval</h3>
             <p className="text-gray-300">
-              Choose a repayment plan that fits your budget and lifestyle, with terms tailored just for you.
+              Experience fast processing and instant approval for your gold
+              loan.
             </p>
           </div>
           <div className="bg-gray-700 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:bg-[#3b403c] transition duration-300">
-            <h3 className="text-2xl font-bold mb-2">Fast Processing</h3>
+            <h3 className="text-2xl font-bold mb-2">Flexible Repayments</h3>
             <p className="text-gray-300">
-              Experience quick approvals and fast disbursement of funds without unnecessary delays.
+              Choose repayment options that suit your financial situation.
             </p>
           </div>
         </div>
@@ -65,9 +67,11 @@ function PersonalLoan() {
 
       {/* Call-to-Action Section */}
       <section className="py-12 text-center">
-        <h2 className="text-4xl font-bold mb-4">Why Choose Our Personal Loans?</h2>
+        <h2 className="text-4xl font-bold mb-4">Why Choose Our Gold Loans?</h2>
         <p className="text-gray-300 max-w-2xl mx-auto mb-8">
-          Our personal loans are designed to offer you financial flexibility and peace of mind, with transparent processes and competitive rates. Whether you're planning for a big expense or need funds for an emergency, we're here to help.
+          Our gold loans offer the perfect blend of security, speed, and
+          flexibility. Access funds quickly while retaining ownership of your
+          valuable assets.
         </p>
         <a
           href="/apply-loan"
@@ -80,4 +84,4 @@ function PersonalLoan() {
   );
 }
 
-export default PersonalLoan;
+export default GoldLoan;

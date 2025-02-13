@@ -11,10 +11,11 @@ import PrivacyPolicy from "./components/pages/PrvacyPolicy.jsx";
 import Signup from "./components/auth/Signup.jsx";
 import Login from "./components/auth/Login.jsx";
 import TermsAndConditions from "./components/pages/TermsAndCondition.jsx";
-import LoanForm from "./components/pages/LoanForm.jsx";
-import AllLoans from "./components/loans/AllLoans.jsx";
+import LoanForm from "./components/loan/LoanForm.jsx";
+import AllLoans from "./components/pages/loans/AllLoans.jsx";
 import PhoneLogin from "./components/auth/PhoneLogin.jsx";
 import Profile from "./components/profile/Profile.jsx";
+import Dashboard from "./components/pages/dashboard/Dashboard.jsx";
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
             <Route path="/signup" element={<Signup />} />
 
             <Route path="/login" element={<Login />} />
+
+            <Route path="/admin-dashboard" element={<Dashboard />} />
 
 
             <Route path="/profile" element={<Profile />} />

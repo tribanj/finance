@@ -16,16 +16,26 @@ import AllLoans from "./components/pages/loans/AllLoans.jsx";
 import PhoneLogin from "./components/auth/PhoneLogin.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import Dashboard from "./components/pages/dashboard/Dashboard.jsx";
-
+import DashboardLayout from "./components/pages/dashboard/DashboardLayout.jsx";
+import { useState } from "react";
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Function to toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
+
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
+      <div className={`flex flex-col min-h-screen ${darkMode ? "dark" : ""}`}>
+        {/* Navbar */}
         <Navbar />
 
-        <main className="flex-grow mt-30">
+        {/* Main Content */}
+        <main className="flex-grow pt-20">
           <Routes>
-            {/* Home Route */}
+            {/* Public Pages */}
             <Route
               path="/"
               element={
@@ -35,40 +45,38 @@ function App() {
                 </>
               }
             />
-
-            {/* About Route */}
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FaQ />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
+            {/* Authentication */}
             <Route path="/signup" element={<Signup />} />
-
             <Route path="/login" element={<Login />} />
-
-            <Route path="/admin-dashboard" element={<Dashboard />} />
-
-
-            <Route path="/profile" element={<Profile />} />
-            
             <Route path="/sign-in-with-mobile" element={<PhoneLogin />} />
 
-            {/* Contact Route */}
-            <Route path="/contact" element={<Contact />} />
-
-            <Route path="/faq" element={<FaQ />} />
-
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-
+            {/* User Pages */}
+            <Route path="/profile" element={<Profile />} />
             <Route path="/apply-loan" element={<LoanForm />} />
+            <Route path="/loans" element={<AllLoans />} />
 
-            <Route path="/loan-types" element={<AllLoans />} />
+            {/* Admin Dashboard (Wrapped with DashboardLayout) */}
+            <Route
+              path="/admin-dashboard"
+              element={<DashboardLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}
+            >
+              <Route index element={<Dashboard />} />
+              {/* Future admin routes can be added here */}
+            </Route>
 
-            <Route path="/terms&condition" element={<TermsAndConditions />} />
-
-            {/* 404 Route - Optional */}
+            {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        <hr className="border-t-2 border-cyan-500" />
 
+        {/* Footer */}
+        <hr className="border-t-2 border-cyan-500" />
         <Footer />
       </div>
     </Router>

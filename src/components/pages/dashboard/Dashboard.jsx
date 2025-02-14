@@ -24,7 +24,7 @@ const Dashboard = () => {
     },
     { title: "Support Tickets", value: 15 }, // Add actual data
   ];
-  console.log("I am from admin dashboard",stats);
+  // console.log("I am from admin dashboard",stats);
   // Chart Configuration
   const chartOptions = {
     chart: {

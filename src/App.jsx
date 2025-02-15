@@ -3,9 +3,9 @@ import HomePage from "./components/pages/home/Hompage";
 import Navbar from "./components/nav/Navbar";
 import Carousel from "./components/pages/home/Cerausel";
 import Footer from "./components/footer/Footer";
-import About from "./components/pages/about/About"; // Create this component
-import Contact from "./components/pages/contact/Contact"; // Create this component
-import NotFound from "./components/pages/NotFound.jsx"; // Optional: Create this component
+import About from "./components/pages/about/About";
+import Contact from "./components/pages/contact/Contact";
+import NotFound from "./components/pages/NotFound.jsx";
 import FaQ from "./components/pages/FaQ.jsx";
 import PrivacyPolicy from "./components/pages/PrvacyPolicy.jsx";
 import Signup from "./components/auth/Signup.jsx";
@@ -18,8 +18,16 @@ import Profile from "./components/profile/Profile.jsx";
 import Dashboard from "./components/pages/dashboard/Dashboard.jsx";
 import DashboardLayout from "./components/pages/dashboard/DashboardLayout.jsx";
 import { useState } from "react";
+import ProtectedRoute from "./components/ProtectedRout.jsx";
+import HomeLoanForm from "./components/pages/loans/HomeLoanForm.jsx";
+import LoanSelection from "./components/pages/loans/LoanSelection.jsx";
+import GoldLoanForm from "./components/pages/loans/GoldLoanForm.jsx";
+import PersonalLoanForm from "./components/pages/loans/PersonalLoanForm.jsx";
+import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRoute
+
 function App() {
   const [darkMode, setDarkMode] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Function to toggle dark mode
   const toggleDarkMode = () => {
@@ -49,25 +57,57 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FaQ />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route
+              path="/terms-and-conditions"
+              element={<TermsAndConditions />}
+            />
 
             {/* Authentication */}
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute isAuthenticated={isAuthenticated}>
+                  <Signup />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute isAuthenticated={isAuthenticated}>
+                  <Login />
+                </PublicRoute>
+              }
+            />
             <Route path="/sign-in-with-mobile" element={<PhoneLogin />} />
 
             {/* User Pages */}
             <Route path="/profile" element={<Profile />} />
-            <Route path="/apply-loan" element={<LoanForm />} />
             <Route path="/loans" element={<AllLoans />} />
 
             {/* Admin Dashboard (Wrapped with DashboardLayout) */}
             <Route
               path="/admin-dashboard"
-              element={<DashboardLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}
+              element={
+                <DashboardLayout
+                  darkMode={darkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
             >
               <Route index element={<Dashboard />} />
               {/* Future admin routes can be added here */}
+            </Route>
+
+            {/* Protected Apply Loan Routes */}
+            <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+              <Route path="/apply-loan">
+                {/* When no loan type is selected, show the loan selection screen */}
+                <Route index element={<LoanSelection />} />
+                <Route path="personal" element={<PersonalLoanForm />} />
+                <Route path="home" element={<HomeLoanForm />} />
+                <Route path="gold" element={<GoldLoanForm />} />
+              </Route>
             </Route>
 
             {/* 404 Route */}

@@ -27,7 +27,7 @@ import PersonalLoanForm from "./components/pages/loans/PersonalLoanForm.jsx";
 import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRoute
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  // const [darkMode, setDarkMode] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Listen for authentication state changes
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <Router>
-      <div className={`flex flex-col min-h-screen ${darkMode ? "dark" : ""}`}>
+      <div className={`flex flex-col min-h-screen`}>
         {/* Navbar */}
         <Navbar />
 

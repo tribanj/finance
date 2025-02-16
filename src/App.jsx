@@ -1,4 +1,8 @@
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./components/firebaseConfig"; 
+
 import HomePage from "./components/pages/home/Hompage";
 import Navbar from "./components/nav/Navbar";
 import Carousel from "./components/pages/home/Cerausel";
@@ -11,13 +15,11 @@ import PrivacyPolicy from "./components/pages/PrvacyPolicy.jsx";
 import Signup from "./components/auth/Signup.jsx";
 import Login from "./components/auth/Login.jsx";
 import TermsAndConditions from "./components/pages/TermsAndCondition.jsx";
-import LoanForm from "./components/loan/LoanForm.jsx";
 import AllLoans from "./components/pages/loans/AllLoans.jsx";
 import PhoneLogin from "./components/auth/PhoneLogin.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import Dashboard from "./components/pages/dashboard/Dashboard.jsx";
 import DashboardLayout from "./components/pages/dashboard/DashboardLayout.jsx";
-import { useState } from "react";
 import ProtectedRoute from "./components/ProtectedRout.jsx";
 import HomeLoanForm from "./components/pages/loans/HomeLoanForm.jsx";
 import LoanSelection from "./components/pages/loans/LoanSelection.jsx";
@@ -28,6 +30,15 @@ import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRout
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user); // If user exists, set to true; otherwise, false
+    });
+
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
 
   // Function to toggle dark mode
   const toggleDarkMode = () => {
@@ -96,13 +107,13 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              {/* Future admin routes can be added here */}
             </Route>
 
             {/* Protected Apply Loan Routes */}
-            <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+            <Route
+              element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
+            >
               <Route path="/apply-loan">
-                {/* When no loan type is selected, show the loan selection screen */}
                 <Route index element={<LoanSelection />} />
                 <Route path="personal" element={<PersonalLoanForm />} />
                 <Route path="home" element={<HomeLoanForm />} />

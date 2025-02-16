@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
-import { RecaptchaVerifier, signInWithPhoneNumber, updateProfile } from "firebase/auth";
+import {
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  updateProfile,
+} from "firebase/auth";
 
 const PhoneLogin = () => {
   const [userName, setUserName] = useState("");
@@ -10,6 +14,21 @@ const PhoneLogin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Initialize reCAPTCHA only once when the component mounts
+  useEffect(() => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+        callback: (response) => {
+          console.log("reCAPTCHA Verified", response);
+        },
+        "expired-callback": () => {
+          console.log("reCAPTCHA expired");
+        },
+      });
+    }
+  }, []);
+
   // Handle phone number submission and send OTP
   const handlePhoneNumberSubmit = async (e) => {
     e.preventDefault();
@@ -17,15 +36,14 @@ const PhoneLogin = () => {
     setError("");
 
     try {
-      // Initialize reCAPTCHA verifier
-      const recaptchaVerifier = new RecaptchaVerifier(
-        "recaptcha-container",
-        { size: "invisible" },
-        auth
-      );
+      if (!phoneNumber.startsWith("+")) {
+        setError("Phone number must include country code (e.g., +91 for Ind).");
+        setLoading(false);
+        return;
+      }
 
-      // Send OTP to the provided phone number (prepend '+' if needed)
-      const result = await signInWithPhoneNumber(auth, `+${phoneNumber}`, recaptchaVerifier);
+      const appVerifier = window.recaptchaVerifier;
+      const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
       setConfirmationResult(result);
       alert("OTP sent successfully!");
     } catch (err) {
@@ -35,22 +53,26 @@ const PhoneLogin = () => {
     }
   };
 
-  // Handle OTP verification and update user profile with the name
+  // Handle OTP verification and update user profile
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      // Verify OTP
+      if (!confirmationResult) {
+        setError("OTP was not sent. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
-      
-      // Update user profile with the provided name
+
       if (userName) {
         await updateProfile(user, { displayName: userName });
       }
-      
+
       alert("Login successful!");
       console.log("User:", user);
     } catch (err) {
@@ -84,11 +106,11 @@ const PhoneLogin = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300">
-              Phone Number
+              Phone Number (with country code)
             </label>
             <input
               type="tel"
-              placeholder="Enter your phone number"
+              placeholder="+91234567890"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="w-full px-4 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -133,9 +155,7 @@ const PhoneLogin = () => {
       <div id="recaptcha-container"></div>
 
       {/* Display Error Message */}
-      {error && (
-        <p className="mt-4 text-sm text-red-500 text-center">{error}</p>
-      )}
+      {error && <p className="mt-4 text-sm text-red-500 text-center">{error}</p>}
     </div>
   );
 };

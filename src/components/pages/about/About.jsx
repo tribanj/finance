@@ -7,7 +7,7 @@ const About = () => {
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl font-bold mb-4">About Us</h1>
           <h3 className="text-2xl font-semibold text-teal-400 mb-4">
-            Founder: Ravikant Sharma
+            Founder: Er. Vishal Kumar Yadav
           </h3>
           <p className="text-lg text-gray-300 mb-6">
             <span className=" text-2xl">Life Comrade MicroFinserve</span> is a leading microfinance company founded

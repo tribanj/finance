@@ -1,5 +1,8 @@
 // src/components/loan/HomeLoanForm.jsx
 import { useState } from 'react';
+import { db, auth} from '../../firebaseConfig'; 
+import { collection, addDoc } from 'firebase/firestore';// Import Firebase config
+
 import {
   Container,
   TextField,
@@ -12,6 +15,7 @@ import {
   FormLabel,
   Checkbox,
   Button,
+  Paper,
   FormGroup,
 } from '@mui/material';
 
@@ -27,6 +31,8 @@ const HomeLoanForm = () => {
     employer: '',
     income: '',
     employmentType: '',
+    loanType: 'Home Loan',
+    status: 'pending',
     propertyAddress: '',
     propertyType: '',
     propertyValue: '',
@@ -36,6 +42,8 @@ const HomeLoanForm = () => {
     bankName: '',
     accountNumber: '',
     ifsc: '',
+    aadharNumber: '', // Added Aadhaar Number
+    panNumber: '', // Added PAN Number
     identityProof: false,
     addressProof: false,
     incomeProof: false,
@@ -51,14 +59,31 @@ const HomeLoanForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process the application submission
-    console.log(values);
+    
+    const user = auth.currentUser; // Get the logged-in user
+    if (!user) {
+      alert('You must be logged in to submit an application.');
+      return;
+    }
+  
+    try {
+      await addDoc(collection(db, 'applications'), {
+        userId: user.uid, // Store user ID
+        ...values, // Store form data
+        createdAt: new Date(),
+      });
+      alert('Loan application submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting loan application:', error);
+      alert('Failed to submit application.');
+    }
   };
 
   return (
     <Container maxWidth="md" sx={{ my: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: 3 }}>
       <Typography variant="h4" gutterBottom>
         Home Loan Application Form
       </Typography>
@@ -67,7 +92,6 @@ const HomeLoanForm = () => {
           1. Applicant Details
         </Typography>
         <Grid container spacing={2}>
-          {/* Applicant Details */}
           <Grid item xs={12}>
             <TextField fullWidth label="Full Name" name="fullName" value={values.fullName} onChange={handleChange} required />
           </Grid>
@@ -102,13 +126,18 @@ const HomeLoanForm = () => {
           <Grid item xs={12}>
             <TextField fullWidth label="Residential Address" name="address" value={values.address} onChange={handleChange} required />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="Aadhaar Number" name="aadharNumber" value={values.aadharNumber} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="PAN Number" name="panNumber" value={values.panNumber} onChange={handleChange} required />
+          </Grid>
         </Grid>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
           2. Employment Details
         </Typography>
         <Grid container spacing={2}>
-          {/* Employment Details */}
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Occupation" name="occupation" value={values.occupation} onChange={handleChange} required />
           </Grid>
@@ -160,70 +189,24 @@ const HomeLoanForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Preferred Tenure (in years)" name="tenure" value={values.tenure} onChange={handleChange} required />
           </Grid>
-          <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel>Purpose of Loan</FormLabel>
-              <RadioGroup row name="loanPurpose" value={values.loanPurpose} onChange={handleChange}>
-                <FormControlLabel value="Purchase" control={<Radio />} label="Purchase" />
-                <FormControlLabel value="Construction" control={<Radio />} label="Construction" />
-                <FormControlLabel value="Renovation" control={<Radio />} label="Renovation" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
         </Grid>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          5. Bank Account Details
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Bank Name" name="bankName" value={values.bankName} onChange={handleChange} required />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Account Number" name="accountNumber" value={values.accountNumber} onChange={handleChange} required />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="IFSC Code" name="ifsc" value={values.ifsc} onChange={handleChange} required />
-          </Grid>
-        </Grid>
-
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          6. Documents Attached (Checklist)
+          5. Documents Attached (Checklist)
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={values.identityProof} onChange={handleChange} name="identityProof" />}
-            label="Identity Proof (Aadhaar/Passport/Driving License)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.addressProof} onChange={handleChange} name="addressProof" />}
-            label="Address Proof (Utility Bill/Rental Agreement)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.incomeProof} onChange={handleChange} name="incomeProof" />}
-            label="Income Proof (Salary Slip/Bank Statements)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.panCard} onChange={handleChange} name="panCard" />}
-            label="PAN Card"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.propertyDocuments} onChange={handleChange} name="propertyDocuments" />}
-            label="Property Documents (Sale Deed/Approved Plan)"
-          />
+          <FormControlLabel control={<Checkbox checked={values.identityProof} onChange={handleChange} name="identityProof" />} label="Identity Proof" />
+          <FormControlLabel control={<Checkbox checked={values.addressProof} onChange={handleChange} name="addressProof" />} label="Address Proof" />
+          <FormControlLabel control={<Checkbox checked={values.incomeProof} onChange={handleChange} name="incomeProof" />} label="Income Proof" />
+          <FormControlLabel control={<Checkbox checked={values.panCard} onChange={handleChange} name="panCard" />} label="PAN Card" />
+          <FormControlLabel control={<Checkbox checked={values.propertyDocuments} onChange={handleChange} name="propertyDocuments" />} label="Property Documents" />
         </FormGroup>
-
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          7. Declaration
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          I hereby declare that the information provided above is true and accurate to the best of my knowledge. I understand that any false information may lead to rejection of my loan application.
-        </Typography>
 
         <Button variant="contained" color="primary" type="submit" sx={{ mt: 3 }}>
           Submit Application
         </Button>
       </form>
+      </Paper>
     </Container>
   );
 };

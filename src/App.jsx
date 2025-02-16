@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./components/firebaseConfig"; 
+import { auth } from "./components/firebaseConfig";
 
 import HomePage from "./components/pages/home/Hompage";
 import Navbar from "./components/nav/Navbar";
@@ -19,7 +19,6 @@ import AllLoans from "./components/pages/loans/AllLoans.jsx";
 import PhoneLogin from "./components/auth/PhoneLogin.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import Dashboard from "./components/pages/dashboard/Dashboard.jsx";
-import DashboardLayout from "./components/pages/dashboard/DashboardLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRout.jsx";
 import HomeLoanForm from "./components/pages/loans/HomeLoanForm.jsx";
 import LoanSelection from "./components/pages/loans/LoanSelection.jsx";
@@ -40,10 +39,6 @@ function App() {
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
-  // Function to toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode((prevMode) => !prevMode);
-  };
 
   return (
     <Router>
@@ -96,20 +91,9 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/loans" element={<AllLoans />} />
 
-            {/* Admin Dashboard (Wrapped with DashboardLayout) */}
-            <Route
-              path="/admin-dashboard"
-              element={
-                <DashboardLayout
-                  darkMode={darkMode}
-                  toggleDarkMode={toggleDarkMode}
-                />
-              }
-            >
-              <Route index element={<Dashboard />} />
-            </Route>
+         
+                <Route path="/admin-dashboard" element={<Dashboard />} />
 
-            {/* Protected Apply Loan Routes */}
             <Route
               element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
             >

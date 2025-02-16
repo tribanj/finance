@@ -1,5 +1,6 @@
-// src/components/loan/GoldLoanForm.jsx
-import  { useState } from 'react';
+import { useState } from 'react';
+import { db, auth} from '../../firebaseConfig'; 
+import { collection, addDoc } from 'firebase/firestore';
 import {
   Container,
   TextField,
@@ -12,6 +13,7 @@ import {
   FormLabel,
   Checkbox,
   Button,
+  Paper,
   FormGroup,
 } from '@mui/material';
 
@@ -23,11 +25,15 @@ const GoldLoanForm = () => {
     contact: '',
     email: '',
     address: '',
+    adharNo: '',
+    panNo: '',
     goldType: '',
     totalWeight: '',
     purity: '',
     estimatedValue: '',
     loanAmount: '',
+    loanType: 'Gold Loan',
+    status: 'pending',
     tenure: '',
     bankName: '',
     accountNumber: '',
@@ -46,14 +52,33 @@ const GoldLoanForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process the application submission
-    console.log(values);
+    
+    const user = auth.currentUser; // Get the logged-in user
+    if (!user) {
+      alert('You must be logged in to submit an application.');
+      return;
+    }
+  
+    try {
+      await addDoc(collection(db, 'applications'), {
+        userId: user.uid, // Store user ID
+        ...values, // Store form data
+        createdAt: new Date(),
+      });
+      alert('Loan application submitted successfully!');
+      
+    } catch (error) {
+      console.error('Error submitting loan application:', error);
+      alert('Failed to submit application.');
+    }
   };
 
   return (
     <Container maxWidth="md" sx={{ my: 4 }}>
+            <Paper elevation={3} sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: 3 }}>
+
       <Typography variant="h4" gutterBottom>
         Gold Loan Application Form
       </Typography>
@@ -62,7 +87,6 @@ const GoldLoanForm = () => {
           1. Applicant Details
         </Typography>
         <Grid container spacing={2}>
-          {/* Applicant Details */}
           <Grid item xs={12}>
             <TextField fullWidth label="Full Name" name="fullName" value={values.fullName} onChange={handleChange} required />
           </Grid>
@@ -97,6 +121,12 @@ const GoldLoanForm = () => {
           <Grid item xs={12}>
             <TextField fullWidth label="Residential Address" name="address" value={values.address} onChange={handleChange} required />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="Aadhaar Number" name="adharNo" value={values.adharNo} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="PAN Number" name="panNo" value={values.panNo} onChange={handleChange} required />
+          </Grid>
         </Grid>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
@@ -125,34 +155,7 @@ const GoldLoanForm = () => {
         </Grid>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          3. Loan Details
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Loan Amount Requested" name="loanAmount" value={values.loanAmount} onChange={handleChange} required />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Preferred Tenure (months/years)" name="tenure" value={values.tenure} onChange={handleChange} required />
-          </Grid>
-        </Grid>
-
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          4. Bank Account Details
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Bank Name" name="bankName" value={values.bankName} onChange={handleChange} required />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="Account Number" name="accountNumber" value={values.accountNumber} onChange={handleChange} required />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField fullWidth label="IFSC Code" name="ifsc" value={values.ifsc} onChange={handleChange} required />
-          </Grid>
-        </Grid>
-
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          5. Documents Attached (Checklist)
+          3. Documents Attached (Checklist)
         </Typography>
         <FormGroup>
           <FormControlLabel
@@ -173,17 +176,11 @@ const GoldLoanForm = () => {
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-          6. Declaration
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          I hereby declare that the gold items pledged are my lawful property, and the information provided above is true and accurate. I understand that failure to repay the loan may result in the sale of the pledged gold.
-        </Typography>
-
         <Button variant="contained" color="primary" type="submit" sx={{ mt: 3 }}>
           Submit Application
         </Button>
       </form>
+      </Paper>
     </Container>
   );
 };

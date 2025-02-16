@@ -1,4 +1,6 @@
 // src/components/loan/PersonalLoanForm.jsx
+import { db, auth} from '../../firebaseConfig'; 
+import { collection, addDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import {
   Container,
@@ -12,6 +14,7 @@ import {
   FormLabel,
   Checkbox,
   Button,
+  Paper,
   FormGroup,
 } from '@mui/material';
 
@@ -27,12 +30,16 @@ const PersonalLoanForm = () => {
     employer: '',
     income: '',
     employmentType: '',
+    loanType: 'Personal Loan',
+    status: 'pending',
     loanAmount: '',
     loanPurpose: '',
     tenure: '',
     bankName: '',
     accountNumber: '',
     ifsc: '',
+    aadharNumber: '', // Added Aadhaar Number
+    panNumber: '', // Added PAN Number
     identityProof: false,
     addressProof: false,
     incomeProof: false,
@@ -47,14 +54,32 @@ const PersonalLoanForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process the application submission
-    console.log(values);
+    
+    const user = auth.currentUser; // Get the logged-in user
+    if (!user) {
+      alert('You must be logged in to submit an application.');
+      return;
+    }
+  
+    try {
+      await addDoc(collection(db, 'applications'), {
+        userId: user.uid, // Store user ID
+        ...values, // Store form data
+        createdAt: new Date(),
+      });
+      alert('Loan application submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting loan application:', error);
+      alert('Failed to submit application.');
+    }
   };
 
   return (
-    <Container maxWidth="md" sx={{ my: 4 }}>
+    
+    <Container maxWidth="md" sx={{ my: 4 }} >
+      <Paper elevation={3} sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: 3 }}> 
       <Typography variant="h4" gutterBottom>
         Personal Loan Application Form
       </Typography>
@@ -96,6 +121,12 @@ const PersonalLoanForm = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField fullWidth label="Residential Address" name="address" value={values.address} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="Aadhaar Number" name="aadharNumber" value={values.aadharNumber} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="PAN Number" name="panNumber" value={values.panNumber} onChange={handleChange} required />
           </Grid>
         </Grid>
 
@@ -157,22 +188,10 @@ const PersonalLoanForm = () => {
           5. Documents Attached (Checklist)
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={values.identityProof} onChange={handleChange} name="identityProof" />}
-            label="Identity Proof (Aadhaar/Passport/Driving License)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.addressProof} onChange={handleChange} name="addressProof" />}
-            label="Address Proof (Utility Bill/Rental Agreement)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.incomeProof} onChange={handleChange} name="incomeProof" />}
-            label="Income Proof (Salary Slip/Bank Statements)"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={values.panCard} onChange={handleChange} name="panCard" />}
-            label="PAN Card"
-          />
+          <FormControlLabel control={<Checkbox checked={values.identityProof} onChange={handleChange} name="identityProof" />} label="Identity Proof (Aadhaar/Passport/Driving License)" />
+          <FormControlLabel control={<Checkbox checked={values.addressProof} onChange={handleChange} name="addressProof" />} label="Address Proof (Utility Bill/Rental Agreement)" />
+          <FormControlLabel control={<Checkbox checked={values.incomeProof} onChange={handleChange} name="incomeProof" />} label="Income Proof (Salary Slip/Bank Statements)" />
+          <FormControlLabel control={<Checkbox checked={values.panCard} onChange={handleChange} name="panCard" />} label="PAN Card" />
         </FormGroup>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
@@ -186,6 +205,7 @@ const PersonalLoanForm = () => {
           Submit Application
         </Button>
       </form>
+      </Paper>
     </Container>
   );
 };

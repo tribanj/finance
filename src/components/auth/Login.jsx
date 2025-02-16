@@ -21,7 +21,7 @@ const Login = () => {
         navigate("/admin-dashboard");
       } else {
         toast.success("Welcome back, User!", { position: "top-right" });
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       toast.error("Invalid credentials. Please try again.", { position: "top-right" });

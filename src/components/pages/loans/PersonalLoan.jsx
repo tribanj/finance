@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 // import React from 'react';
 
+import { Link } from "react-router-dom";
 import personalLoanImg from "../../../assets/personal loan.webp";
 function PersonalLoan() {
   return (
@@ -15,12 +16,11 @@ function PersonalLoan() {
             Get quick and hassle-free access to funds for your personal needs—whether it's education, medical expenses, travel, or unexpected emergencies.
           </p>
           <div className="flex space-x-4 animate-fadeIn delay-200">
-            <a
-              href="/apply-loan"
+            <Link to="/apply-loan"
               className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 transition duration-300 rounded-full text-white font-semibold shadow-lg"
             >
               Apply Now
-            </a>
+            </Link>
             <a
               href="/learn-more"
               className="px-6 py-3 border border-cyan-500 hover:bg-cyan-500 transition duration-300 rounded-full text-cyan-500 hover:text-white font-semibold shadow-lg"

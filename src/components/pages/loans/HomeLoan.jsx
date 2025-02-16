@@ -1,5 +1,7 @@
 // import React from 'react';
+import { Link } from "react-router-dom";
 import homeloneimg from "../../../assets/home-lones.jpeg";
+
 function HomeLoan() {
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
@@ -66,12 +68,11 @@ function HomeLoan() {
         <p className="text-gray-300 max-w-2xl mx-auto mb-8">
           We believe in making home ownership accessible to everyone. With our personalized services and transparent processes, your journey to owning a home is just a click away.
         </p>
-        <a
-          href="/apply-loan"
+        <Link to='/apply-loan'
           className="px-8 py-4 bg-cyan-500 hover:bg-cyan-600 transition duration-300 rounded-full text-white font-semibold shadow-lg"
         >
           Get Started Today
-        </a>
+        </Link>
         <a
           href="/apply-loan"
           className="px-8 py-4 bg-cyan-500 hover:bg-cyan-600 transition duration-300 rounded-full text-white font-semibold shadow-lg"

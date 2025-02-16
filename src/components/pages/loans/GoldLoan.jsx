@@ -1,5 +1,6 @@
 // import React from 'react';
 
+import { Link } from "react-router-dom";
 import goldloanimg from "../../../assets/gold-lone.avif";
 
 function GoldLoan() {
@@ -17,12 +18,11 @@ function GoldLoan() {
             access funds without selling your precious metals.
           </p>
           <div className="flex space-x-4 animate-fadeIn delay-200">
-            <a
-              href="/apply-loan"
+            <Link to='/apply-loan'
               className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 transition duration-300 rounded-full text-white font-semibold shadow-lg"
             >
               Apply Now
-            </a>
+            </Link>
             <a
               href="/learn-more"
               className="px-6 py-3 border border-cyan-500 hover:bg-cyan-500 transition duration-300 rounded-full text-cyan-500 hover:text-white font-semibold shadow-lg"

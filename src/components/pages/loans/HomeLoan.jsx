@@ -72,6 +72,12 @@ function HomeLoan() {
         >
           Get Started Today
         </a>
+        <a
+          href="/apply-loan"
+          className="px-8 py-4 bg-cyan-500 hover:bg-cyan-600 transition duration-300 rounded-full text-white font-semibold shadow-lg"
+        >
+          Download Form 
+        </a>
       </section>
     </div>
   );

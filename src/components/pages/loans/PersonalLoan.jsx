@@ -27,6 +27,12 @@ function PersonalLoan() {
             >
               Learn More
             </a>
+            <a
+              href="/"
+              className="px-6 py-3 border border-cyan-500 hover:bg-cyan-500 transition duration-300 rounded-full text-cyan-500 hover:text-white font-semibold shadow-lg"
+            >
+             Download Form 
+            </a>
           </div>
         </div>
         <div className="w-full md:w-1/2 mt-8 md:mt-0 flex justify-center animate-pulse">

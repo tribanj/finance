@@ -17,13 +17,13 @@ const Carousel = () => {
     },
     {
       image: banner2,
-      title: "Business Loans",
+      title: "Gold Loan",
       subtitle: "Grow Your Enterprise",
       text: "Customized financial solutions for your business",
     },
     {
       image: banner3,
-      title: "Home Loans",
+      title: "Home Loan",
       subtitle: "Your Dream Home Awaits",
       text: "Flexible mortgage solutions with low interest rates",
     },

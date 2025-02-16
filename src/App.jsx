@@ -89,7 +89,7 @@ function App() {
 
             {/* User Pages */}
             <Route path="/profile" element={<Profile />} />
-            <Route path="/loans" element={<AllLoans />} />
+            <Route path="/loan-types" element={<AllLoans />} />
 
          
                 <Route path="/admin-dashboard" element={<Dashboard />} />

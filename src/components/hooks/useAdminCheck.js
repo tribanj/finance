@@ -16,7 +16,7 @@ const useAdminCheck = () => {
 
           if (userSnap.exists()) {
             const userData = userSnap.data();
-            console.log("User Data:", userData); // ✅ Debugging
+            // console.log("User Data:", userData); // ✅ Debugging
             setIsAdmin(userData.role === "admin"); // ✅ Check admin role
           }
         } catch (error) {

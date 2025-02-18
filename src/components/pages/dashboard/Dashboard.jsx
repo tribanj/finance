@@ -12,6 +12,7 @@ import {
   Divider,
   Paper,
   Grid,
+  Button,
   CircularProgress,
 } from "@mui/material";
 import {
@@ -21,6 +22,7 @@ import {
   Paid as PaymentsIcon,
   CheckCircle as ApprovedIcon,
 } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const isAdmin = useAdminCheck(); // Check if the user is an admin
@@ -271,13 +273,32 @@ const Dashboard = () => {
                 Users
               </Typography>
               <List>
-                {users.map((user) => (
-                  <ListItem key={user.id}>
-                    <ListItemText
-                      primary={user.email}
-                      secondary={`Role: ${user.role}`}
-                    />
-                  </ListItem>
+              {users.map((user) => (
+        <ListItem key={user.id} sx={{ display: "flex", justifyContent: "space-between" }}>
+          <ListItemText
+            primary={user.email}
+            secondary={
+              <>
+                <span>{`User Id: ${user.id}`} </span>
+                <br />
+                <span>{`User Name: ${user.firstName}  ${user.lastName}`} </span>
+                <br />
+                <span>{`Role: ${user.role}`}</span>
+              </>
+            }
+          />
+          {/* View Loan Applications Button */}
+          {user.role !== "admin" && (
+            <Button
+              component={Link}
+              to={`/admin/user-loan/${user.id}`}
+              variant="contained"
+              color="primary"
+            >
+              View Loan Application
+            </Button>
+          )}
+        </ListItem>
                 ))}
               </List>
             </>

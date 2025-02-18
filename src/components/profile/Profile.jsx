@@ -172,7 +172,7 @@ const Profile = () => {
                       className={`p-6 rounded-xl shadow-md backdrop-blur-lg ${
                         loan.status === "approved"
                           ? "bg-gradient-to-r from-green-400 to-green-600"
-                          : "bg-gradient-to-r from-yellow-400 to-yellow-600"
+                          : "bg-gradient-to-r from-yellow-950 to-yellow-950"
                       }`}
                     >
                       <p className="font-semibold text-white">
@@ -185,7 +185,7 @@ const Profile = () => {
                           className={`font-bold ${
                             (loan.status || "pending") === "approved"
                               ? "text-green-900"
-                              : "text-yellow-900"
+                              : "text-red-500"
                           }`}
                         >
                           {(loan.status || "pending").toUpperCase()}

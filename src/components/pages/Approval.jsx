@@ -38,7 +38,7 @@ const LoanApproval = () => {
     fetchLoanDetails();
   }, [loanId, db]);
 
-  const handleApproval = async (status) => {
+  const alert = async (status) => {
     if (!loan) return;
 
     try {
@@ -94,14 +94,14 @@ const LoanApproval = () => {
             <Typography>Status: {loan.status}</Typography>
 
             <Box sx={{ marginTop: 2, display: "flex", gap: 2 }}>
-              <Button variant="contained" color="success">
+              <Button variant="contained" color="success" onClick={() => alert(" Sorry application is under maintenance")}>
                 Approve Loan
               </Button>
-              <Button variant="contained" color="error" >
+              <Button variant="contained" color="error" onClick={() => alert("Sorry application is under maintenance")}>
                 Reject Loan
               </Button>
-              <Button variant="contained" color="warning" >
-                Create Emi
+              <Button variant="contained" color="warning" onClick={() => alert("Sorry application is under maintenance")}>
+                Reject Loan
               </Button>
             </Box>
           </CardContent>

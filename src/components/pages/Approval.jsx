@@ -101,7 +101,7 @@ const LoanApproval = () => {
                 Reject Loan
               </Button>
               <Button variant="contained" color="warning" onClick={() => alert("Sorry application is under maintenance")}>
-                Reject Loan
+                Create EMI
               </Button>
             </Box>
           </CardContent>

@@ -90,15 +90,18 @@ const LoanApproval = () => {
             </Typography>
             <Typography variant="h6">User ID: {loan.userId}</Typography>
             <Typography>Loan Type: {loan.loanType}</Typography>
-            <Typography>Amount: ₹{loan.amount}</Typography>
+            <Typography>Amount: ₹{loan.loanAmount}</Typography>
             <Typography>Status: {loan.status}</Typography>
 
             <Box sx={{ marginTop: 2, display: "flex", gap: 2 }}>
-              <Button variant="contained" color="success" onClick={() => handleApproval("Approved")}>
+              <Button variant="contained" color="success">
                 Approve Loan
               </Button>
-              <Button variant="contained" color="error" onClick={() => handleApproval("Rejected")}>
+              <Button variant="contained" color="error" >
                 Reject Loan
+              </Button>
+              <Button variant="contained" color="warning" >
+                Create Emi
               </Button>
             </Box>
           </CardContent>

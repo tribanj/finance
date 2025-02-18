@@ -26,6 +26,7 @@ import GoldLoanForm from "./components/pages/loans/GoldLoanForm.jsx";
 import PersonalLoanForm from "./components/pages/loans/PersonalLoanForm.jsx";
 import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRoute
 import UserLoanApplications from "./components/pages/UserLoanApplications.jsx";
+import LoanApproval from "./components/pages/Approval.jsx";
 
 function App() {
   // const [darkMode, setDarkMode] = useState(false);
@@ -105,6 +106,8 @@ function App() {
                 <Route path="gold" element={<GoldLoanForm />} />
               </Route>
               <Route path="/admin/user-loan/:userId" element={<UserLoanApplications />} />
+              <Route path="/loan-approval/:loanId" element={<LoanApproval />} />
+
 
             </Route>
 

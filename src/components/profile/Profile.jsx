@@ -117,9 +117,6 @@ const Profile = () => {
             <strong>Email:</strong> {user.email}
           </p>
           <p className="text-center mb-2 text-gray-200">
-            <strong>User ID:</strong> {user.uid}
-          </p>
-          <p className="text-center mb-2 text-gray-200">
             <strong>Role:</strong>{" "}
             <span
               className={`font-semibold ${

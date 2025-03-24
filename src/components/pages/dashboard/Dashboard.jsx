@@ -100,6 +100,7 @@ const Dashboard = () => {
         ...doc.data(),
       }));
       setApprovedLoans(approvedLoansList);
+      // console.log("============>", approvedLoansList);
     } catch (error) {
       setError("Error fetching approved loans.");
       console.error("Error fetching approved loans:", error);
@@ -273,32 +274,37 @@ const Dashboard = () => {
                 Users
               </Typography>
               <List>
-              {users.map((user) => (
-        <ListItem key={user.id} sx={{ display: "flex", justifyContent: "space-between" }}>
-          <ListItemText
-            primary={user.email}
-            secondary={
-              <>
-                <span>{`User Id: ${user.id}`} </span>
-                <br />
-                <span>{`User Name: ${user.firstName}  ${user.lastName}`} </span>
-                <br />
-                <span>{`Role: ${user.role}`}</span>
-              </>
-            }
-          />
-          {/* View Loan Applications Button */}
-          {user.role !== "admin" && (
-            <Button
-              component={Link}
-              to={`/admin/user-loan/${user.id}`}
-              variant="contained"
-              color="primary"
-            >
-              View Loan Application
-            </Button>
-          )}
-        </ListItem>
+                {users.map((user) => (
+                  <ListItem
+                    key={user.id}
+                    sx={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <ListItemText
+                      primary={user.email}
+                      secondary={
+                        <>
+                          <span>{`User Id: ${user.id}`} </span>
+                          <br />
+                          <span>
+                            {`User Name: ${user.firstName}  ${user.lastName}`}{" "}
+                          </span>
+                          <br />
+                          <span>{`Role: ${user.role}`}</span>
+                        </>
+                      }
+                    />
+                    {/* View Loan Applications Button */}
+                    {user.role !== "admin" && (
+                      <Button
+                        component={Link}
+                        to={`/admin/user-loan/${user.id}`}
+                        variant="contained"
+                        color="primary"
+                      >
+                        View Loan Application
+                      </Button>
+                    )}
+                  </ListItem>
                 ))}
               </List>
             </>
@@ -345,7 +351,22 @@ const Dashboard = () => {
                   <ListItem key={loan.id}>
                     <ListItemText
                       primary={`User: ${loan.userId}`}
-                      secondary={`Amount: ₹${loan.amount}`}
+                      secondary={
+                        <>
+                          {`Full Name:${loan.fullName} `}
+                          <br />
+                          {`Loan Type: ${loan.loanType}`}
+                          <br />
+                          {`Amount: ₹${loan.loanAmount}`} 
+                          <br />
+                          {`EmiAmount:${loan.emi.emiAmount}/per Month`}
+                          <br />
+                          {`Duration:${loan.emi.duration} Months`}
+                          <br />
+                          {`Intrest Rate:${loan.emi.interestRate}`}
+                          <br />
+                        </>
+                      }
                     />
                   </ListItem>
                 ))}

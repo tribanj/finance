@@ -18,10 +18,14 @@ import Loading from "../Loadder";
 const Profile = () => {
   const [user, loading] = useAuthState(auth);
   const [loanApplications, setLoanApplications] = useState([]);
+  const [approvedLoans, setApprovedLoans] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [payments, setPayments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const navigate = useNavigate();
 
-  // Fetch user role from Firestore
+  // Fetch user role
   useEffect(() => {
     if (user) {
       const fetchUserRole = async () => {
@@ -33,39 +37,64 @@ const Profile = () => {
             setIsAdmin(userData.role === "admin");
           }
         } catch (err) {
-          toast.error("Error fetching user role.", err, {
-            position: "top-right",
-          });
+          toast.error("Error fetching user role.");
         }
       };
-
       fetchUserRole();
     }
   }, [user]);
 
-  // Fetch all loan applications (both pending & approved)
+  // Fetch Loan Applications, Approved Loans, and Payments
   useEffect(() => {
-    if (user && !isAdmin) {
-      const fetchLoanApplications = async () => {
+    if (user) {
+      const fetchLoansAndPayments = async () => {
         try {
-          const loansRef = collection(db, "applications");
-          const q = query(loansRef, where("userId", "==", user.uid));
-          const querySnapshot = await getDocs(q);
-          const loans = querySnapshot.docs.map((doc) => ({
+          // Fetch pending loan applications
+          const applicationsRef = collection(db, "applications");
+          const pendingQuery = query(
+            applicationsRef,
+            where("userId", "==", user.uid)
+          );
+          const pendingSnapshot = await getDocs(pendingQuery);
+          const pendingLoans = pendingSnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
-          setLoanApplications(loans);
+          setLoanApplications(pendingLoans);
+
+          // Fetch approved loans
+          const loansRef = collection(db, "loans");
+          const approvedQuery = query(
+            loansRef,
+            where("userId", "==", user.uid)
+          );
+          const approvedSnapshot = await getDocs(approvedQuery);
+          const approved = approvedSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setApprovedLoans(approved);
+
+          // Fetch payment records
+          const paymentsRef = collection(db, "payments");
+          const paymentQuery = query(
+            paymentsRef,
+            where("userId", "==", user.uid)
+          );
+          const paymentSnapshot = await getDocs(paymentQuery);
+          const paymentRecords = paymentSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setPayments(paymentRecords);
         } catch (err) {
-          toast.error("Error fetching loan applications.", err, {
-            position: "top-right",
-          });
+          toast.error("Error fetching loans and payments.");
         }
       };
 
-      fetchLoanApplications();
+      fetchLoansAndPayments();
     }
-  }, [user, isAdmin]);
+  }, [user]);
 
   if (loading) {
     return <Loading />;
@@ -79,133 +108,328 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      toast.success("Logged out successfully!", { position: "top-right" });
+      toast.success("Logged out successfully!");
       navigate("/login");
     } catch (err) {
-      toast.error("Error logging out. Try again.", err, {
-        position: "top-right",
-      });
+      toast.error("Error logging out. Try again.");
     }
   };
 
   const handleResetPassword = async () => {
     try {
       await sendPasswordResetEmail(auth, user.email);
-      toast.success("Password reset email sent!", { position: "top-right" });
+      toast.success("Password reset email sent!");
     } catch (err) {
-      toast.error("Error sending password reset email.", err, {
-        position: "top-right",
-      });
+      toast.error("Error sending password reset email.");
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center p-4">
-      <ToastContainer />
-      <div className="bg-slate-950 bg-opacity-10 backdrop-blur-lg rounded-xl shadow-2xl p-8 max-w-6xl w-full text-white grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Column: User Details */}
-        <div className="flex flex-col items-center">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-6xl font-bold text-white mb-6 shadow-lg">
-            {user.displayName
-              ? user.displayName.charAt(0).toUpperCase()
-              : user.email.charAt(0).toUpperCase()}
-          </div>
-          <h1 className="text-4xl font-bold text-center mb-4">
-            {user.displayName || "User"}
-          </h1>
-          <p className="text-center mb-2 text-gray-200">
-            <strong>Email:</strong> {user.email}
-          </p>
-          <p className="text-center mb-2 text-gray-200">
-            <strong>Role:</strong>{" "}
-            <span
-              className={`font-semibold ${
-                isAdmin ? "text-green-400" : "text-yellow-400"
-              }`}
-            >
-              {isAdmin ? "Admin" : "User"}
-            </span>
-          </p>
-          <div className="flex flex-col space-y-4 mt-6 w-full">
-            <button
-              onClick={handleLogout}
-              className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 py-3 rounded-full text-white font-semibold transition-all duration-300 transform hover:scale-105"
-            >
-              Logout
-            </button>
-            <button
-              onClick={handleResetPassword}
-              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-yellow-600 hover:to-yellow-800 py-3 rounded-full text-white font-semibold transition-all duration-300 transform hover:scale-105"
-            >
-              Reset Password
-            </button>
-          </div>
-        </div>
+  const handlePayEMI = () => {
+    alert("Under Maintenance 🚧");
+  };
 
-        {/* Right Column: Admin Dashboard OR Loan Applications */}
-        <div className="bg-slate-950 bg-opacity-10 backdrop-blur-lg rounded-xl p-6">
-          {isAdmin ? (
-            <div className="flex flex-col items-center">
-              <h2 className="text-3xl font-bold mb-6 text-center text-white">
-                Admin Panel
-              </h2>
+  const handleNavigateToAdmin = () => {
+    navigate("/admin-dashboard");
+  };
+
+  const handleApplyForLoan = () => {
+    navigate("/apply-loan");
+  };
+
+  const generateEMISchedule = (loan) => {
+    let startDate;
+
+    // Handle approvedAt date
+    if (loan.approvedAt) {
+      if (loan.approvedAt.toDate) {
+        startDate = loan.approvedAt.toDate();
+      } else if (typeof loan.approvedAt === "string") {
+        startDate = new Date(loan.approvedAt);
+      } else {
+        startDate = new Date();
+      }
+    } else {
+      startDate = new Date();
+    }
+
+    // 🔥 Safely handle EMI amount with type checking
+    let emiAmount = 0;
+    if (loan?.emi?.emiAmount !== undefined && loan?.emi?.emiAmount !== null) {
+      emiAmount =
+        typeof loan.emi.emiAmount === "string"
+          ? parseFloat(loan.emi.emiAmount)
+          : loan.emi.emiAmount;
+    }
+
+    const duration =
+      loan.emi && loan.emi.duration ? parseInt(loan.emi.duration, 10) : 0;
+
+    const emiSchedule = [];
+
+    for (let i = 0; i < duration; i++) {
+      const emiDate = new Date(startDate);
+      emiDate.setMonth(emiDate.getMonth() + i);
+      emiDate.setDate(10); // EMI due date: 10th of every month
+
+      const paymentStatus = payments.find(
+        (p) => p.loanId === loan.id && p.emiMonth === i + 1
+      );
+
+      emiSchedule.push({
+        month: emiDate.toLocaleDateString("en-IN", {
+          month: "long",
+          year: "numeric",
+        }),
+        dueDate: emiDate.toLocaleDateString(),
+        amount: `${emiAmount.toFixed(2)} ₹`, // Displaying with currency symbol
+        status: paymentStatus ? paymentStatus.status : "Pending",
+      });
+    }
+
+    return emiSchedule;
+  };
+
+  const paginatedEMIs = (loan) => {
+    const emiSchedule = generateEMISchedule(loan);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return emiSchedule.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(
+    approvedLoans.reduce(
+      (acc, loan) => acc + generateEMISchedule(loan).length,
+      0
+    ) / itemsPerPage
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-violet-800 flex items-center justify-center p-4">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className="bg-white/5 backdrop-blur-2xl rounded-2xl shadow-2xl overflow-hidden w-full max-w-6xl border border-white/10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          {/* Left Column - User Profile */}
+          <div className="p-10 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 flex flex-col items-center relative overflow-hidden">
+            {/* Floating particles */}
+            <div className="absolute inset-0 overflow-hidden">
+              {[...Array(20)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute rounded-full bg-white/10"
+                  style={{
+                    width: `${Math.random() * 10 + 5}px`,
+                    height: `${Math.random() * 10 + 5}px`,
+                    top: `${Math.random() * 100}%`,
+                    left: `${Math.random() * 100}%`,
+                    animation: `float ${
+                      Math.random() * 10 + 10
+                    }s linear infinite`,
+                    animationDelay: `${Math.random() * 5}s`,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* User avatar with glowing effect */}
+            <div className="relative mb-8 group">
+              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-6xl font-bold text-white shadow-xl z-10 relative overflow-hidden">
+                {user.displayName
+                  ? user.displayName.charAt(0).toUpperCase()
+                  : user.email.charAt(0).toUpperCase()}
+                <div className="absolute inset-0 rounded-full bg-white/20 group-hover:opacity-0 transition-opacity duration-300" />
+              </div>
+              <div className="absolute inset-0 rounded-full bg-cyan-400 blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300 -z-10" />
+            </div>
+
+            <h1 className="text-4xl font-bold text-center mb-3 text-white tracking-tight">
+              {user.displayName || "User"}
+            </h1>
+
+            <div className="text-center space-y-2 mb-8">
+              <p className="text-white/80">
+                <span className="font-medium text-white">Email:</span>{" "}
+                {user.email}
+              </p>
+              <p className="text-white/80">
+                <span className="font-medium text-white">Role:</span>{" "}
+                <span
+                  className={`font-semibold ${
+                    isAdmin ? "text-cyan-300" : "text-yellow-300"
+                  }`}
+                >
+                  {isAdmin ? "Admin" : "User"}
+                </span>
+              </p>
+            </div>
+
+            <div className="flex flex-col space-y-4 w-full max-w-xs">
               <button
-                onClick={() => navigate("/admin-dashboard")}
-                className="bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 py-3 px-6 rounded-full text-white font-semibold transition-all duration-300 transform hover:scale-105"
+                onClick={handleLogout}
+                className="relative overflow-hidden px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
               >
-                Go to Admin Dashboard
+                <span className="relative z-10">Logout</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-pink-700 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              </button>
+              <button
+                onClick={handleResetPassword}
+                className="relative overflow-hidden px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+              >
+                <span className="relative z-10">Reset Password</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               </button>
             </div>
-          ) : (
-            <>
-              <h2 className="text-3xl font-bold mb-6 text-center text-white">
-                My Loan Applications
-              </h2>
-              {loanApplications.length > 0 ? (
-                <div className="space-y-4">
-                  {loanApplications.map((loan) => (
-                    <div
-                      key={loan.id}
-                      className={`p-6 rounded-xl shadow-md backdrop-blur-lg ${
-                        loan.status === "approved"
-                          ? "bg-gradient-to-r from-green-400 to-green-600"
-                          : "bg-gradient-to-r from-yellow-950 to-yellow-950"
-                      }`}
+          </div>
+
+          {/* Right Column - Loans & EMI */}
+          <div className="p-10 bg-white/5 backdrop-blur-lg flex flex-col">
+            <h2 className="text-3xl font-bold text-white mb-6 pb-4 border-b border-white/10">
+              {isAdmin ? "Admin Dashboard" : "Your Loan Dashboard"}
+            </h2>
+
+            {!isAdmin && approvedLoans.length > 0 ? (
+              approvedLoans.map((loan) => (
+                <div key={loan.id} className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-white">
+                      {loan.loanType} Loan • ₹{loan.loanAmount}
+                    </h3>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
+                      Active
+                    </span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {paginatedEMIs(loan).map((emi, index) => (
+                      <div
+                        key={index}
+                        className={`p-4 rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${
+                          emi.status === "Pending"
+                            ? "bg-gradient-to-r from-blue-600/30 to-indigo-600/30 border border-blue-500/30 hover:border-blue-400/50"
+                            : "bg-white/5 border border-white/5"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium text-white">
+                              {emi.month}
+                            </p>
+                            <p className="text-sm text-white/70">
+                              Due: {emi.dueDate}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-white">
+                              ₹{emi.amount}
+                            </p>
+                            <p
+                              className={`text-sm ${
+                                emi.status === "Paid"
+                                  ? "text-green-400"
+                                  : "text-yellow-400"
+                              }`}
+                            >
+                              {emi.status}
+                            </p>
+                          </div>
+                        </div>
+                        {emi.status === "Pending" && (
+                          <button
+                            onClick={() => handlePayEMI(emi)}
+                            className="mt-3 w-full py-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg text-white font-medium hover:shadow-lg transition-all"
+                          >
+                            Pay Now
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  <div className="flex justify-center gap-2 mt-6">
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 bg-white/10 rounded-lg text-white disabled:opacity-50 hover:bg-white/20 transition"
                     >
-                      <p className="font-semibold text-white">
-                        Loan Amount: ₹{loan.loanAmount}
-                      </p>
-                      <p className="text-white">Tenure: {loan.tenure} months</p>
-                      <p className="text-white">
-                        Status:{" "}
-                        <span
-                          className={`font-bold ${
-                            (loan.status || "pending") === "approved"
-                              ? "text-green-900"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {(loan.status || "pending").toUpperCase()}
-                        </span>
-                      </p>
-                      <p className="text-white">
-                        Applied On:{" "}
-                        {loan.createdAt && loan.createdAt.toDate
-                          ? loan.createdAt.toDate().toLocaleDateString()
-                          : "N/A"}
-                      </p>
-                    </div>
-                  ))}
+                      Previous
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 bg-white/10 rounded-lg text-white disabled:opacity-50 hover:bg-white/20 transition"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <p className="text-center text-gray-300">
-                  No loan applications found.
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-24 h-24 mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-white/50"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-medium text-white mb-2">
+                  {isAdmin ? "Admin Dashboard Access" : "No Active Loans"}
+                </h3>
+                <p className="text-white/60 max-w-md">
+                  {isAdmin
+                    ? "You're logged in as an administrator. Access the admin dashboard to manage loan applications."
+                    : "You don't have any active loans yet. Apply for a new loan to see your EMI schedule here."}
                 </p>
-              )}
-            </>
-          )}
+                {isAdmin ? (
+                  <button
+                    onClick={handleNavigateToAdmin}
+                    className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-fuchsia-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
+                  >
+                    Go to Admin Dashboard
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleApplyForLoan}
+                    className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
+                  >
+                    Apply for Loan
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      <style jsx global>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          25% {
+            transform: translateY(-20px) translateX(10px);
+          }
+          50% {
+            transform: translateY(0) translateX(20px);
+          }
+          75% {
+            transform: translateY(20px) translateX(10px);
+          }
+        }
+      `}</style>
     </div>
   );
 };

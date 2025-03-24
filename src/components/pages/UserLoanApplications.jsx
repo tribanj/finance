@@ -7,7 +7,7 @@ const formatDate = (timestamp) => {
   if (timestamp instanceof Timestamp) {
     return timestamp.toDate().toLocaleDateString();
   }
-  return "Unknown Date";
+  return timestamp ? new Date(timestamp).toLocaleDateString() : "Unknown Date";
 };
 
 const UserLoanApplications = () => {
@@ -16,16 +16,19 @@ const UserLoanApplications = () => {
   const db = getFirestore();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchLoans = async () => {
       setLoading(true);
+      setError(null);
+
       try {
         console.log("Fetching loan applications for userId:", userId);
 
-        // Firestore Query
         const q = query(collection(db, "applications"), where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
+
         const loans = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -35,6 +38,7 @@ const UserLoanApplications = () => {
         setApplications(loans);
       } catch (error) {
         console.error("Error fetching loan applications:", error);
+        setError("Failed to fetch loan applications.");
       } finally {
         setLoading(false);
       }
@@ -44,74 +48,94 @@ const UserLoanApplications = () => {
   }, [userId, db]);
 
   const handleApprove = (loanId) => {
-    navigate(`/loan-approval/${loanId}`); // Redirect to loan approval page
+    navigate(`/loan-approval/${loanId}`); 
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">
-        Loan Applications for User ID: {userId}
+    <div className="p-4 sm:p-8 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen">
+      <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 mb-8">
+        Loan Applications <span className="text-gray-400">for User ID:</span> {userId}
       </h1>
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-[200px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="flex justify-center items-center min-h-[300px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-dashed border-cyan-500"></div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-600/20 p-6 rounded-lg text-red-400 border border-red-500 text-center">
+          {error}
         </div>
       ) : applications.length === 0 ? (
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <p className="text-gray-600 text-lg">No loan applications found.</p>
+        <div className="bg-gray-800/50 backdrop-blur-lg p-8 rounded-3xl shadow-2xl text-center border border-gray-700">
+          <p className="text-2xl font-light text-gray-400">No loan applications found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {applications.map((loan) => (
-            <div key={loan.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
-                  Loan Application ID: {loan.id}
-                </h2>
-                <div className="space-y-3 text-gray-700">
-                  <p><strong>Applicant Name:</strong> {loan.fullName}</p>
-                  <p><strong>Aadhar No:</strong> {loan.aadharNumber}</p>
-                  <p><strong>PAN No:</strong> {loan.panNumber}</p>
-                  <p><strong>Account No:</strong> {loan.accountNumber}</p>
-                  <p><strong>Mobile No:</strong> {loan.contact}</p>
-                  <p><strong>Date of Birth:</strong> {loan.dob}</p>
-                  <p><strong>IFSC:</strong> {loan.ifsc}</p>
-                  <p><strong>Bank Name:</strong> {loan.bankName}</p>
-                  <p><strong>Address:</strong> {loan.address}</p>
-                  <p><strong>Occupation:</strong> {loan.occupation}</p>
-                  <p><strong>Employer Name:</strong> {loan.employer}</p>
-                  <p><strong>Employment Type:</strong> {loan.employmentType}</p>
-                  <p><strong>Purpose of Loan:</strong> {loan.loanPurpose}</p>
-                  <p><strong>Gender:</strong> {loan.gender}</p>
-                  <p><strong>Loan Type:</strong> {loan.loanType}</p>
-                  <p><strong>Income:</strong> ₹{loan.income}</p>
-                  <p><strong>Loan Amount:</strong> ₹{loan.loanAmount}</p>
-                  <p><strong>Repayment Tenure:</strong> {loan.tenure} months</p>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    <span
-                      className={`font-bold ${
-                        loan.status === "approved"
-                          ? "text-green-600"
-                          : loan.status === "pending"
-                          ? "text-yellow-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {loan.status}
-                    </span>
-                  </p>
-                  <p><strong>Applied Date:</strong> {formatDate(loan.createdAt)}</p>
+            <div
+              key={loan.id}
+              className="group bg-gray-800/40 hover:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-700/30 hover:border-cyan-500/20 relative"
+            >
+              <div className="absolute inset-0 rounded-2xl border border-white/5 pointer-events-none"></div>
+
+              {/* Mobile Layout */}
+              <div className="lg:hidden flex flex-col">
+                <div className="p-6 pb-4 flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="text-xl font-bold text-cyan-400">#{loan.id}</h2>
+                      <p className="text-sm text-gray-400">{loan.fullName}</p>
+                    </div>
+                    <StatusBadge status={loan.status} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <DetailItem label="Loan Amount" value={`₹${loan.loanAmount}`} />
+                    <DetailItem label="Tenure" value={`${loan.tenure} months`} />
+                    <DetailItem label="Applied Date" value={formatDate(loan.createdAt)} />
+                    <DetailItem label="Loan Type" value={loan.loanType} />
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gray-900/20 border-t border-gray-700/30">
+                  <ApproveButton loanId={loan.id} onClick={handleApprove} />
                 </div>
               </div>
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
-                <button
-                  onClick={() => handleApprove(loan.id)}
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Approve Now
-                </button>
+
+              {/* Desktop Layout */}
+              <div className="hidden lg:block p-6">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-cyan-400">#{loan.id}</h2>
+                    <p className="text-gray-400 text-sm">{loan.fullName}</p>
+                  </div>
+                  <StatusBadge status={loan.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <DetailItem label="Aadhar No" value={loan.aadharNumber} />
+                  <DetailItem label="PAN No" value={loan.panNumber} />
+                  <DetailItem label="Contact" value={loan.contact} />
+                  <DetailItem label="DOB" value={loan.dob} />
+                  <DetailItem label="Bank Name" value={loan.bankName} />
+                  <DetailItem label="Account No" value={loan.accountNumber} />
+                  <DetailItem label="IFSC" value={loan.ifsc} />
+                  <DetailItem label="Income" value={`₹${loan.income}`} />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-gray-900/30 p-4 rounded-xl border border-gray-700/20">
+                    <h3 className="text-sm font-semibold text-cyan-500 mb-2">Loan Details</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <DetailItem label="Amount" value={`₹${loan.loanAmount}`} />
+                      <DetailItem label="Tenure" value={`${loan.tenure} months`} />
+                      <DetailItem label="Type" value={loan.loanType} />
+                      <DetailItem label="Purpose" value={loan.loanPurpose} />
+                    </div>
+                  </div>
+
+                  <ApproveButton loanId={loan.id} onClick={handleApprove} />
+                </div>
               </div>
             </div>
           ))}
@@ -120,5 +144,31 @@ const UserLoanApplications = () => {
     </div>
   );
 };
+
+const DetailItem = ({ label, value }) => (
+  <div className="flex flex-col">
+    <span className="text-xs font-medium text-cyan-500/80">{label}</span>
+    <span className="text-gray-200 text-sm font-medium">{value}</span>
+  </div>
+);
+
+const StatusBadge = ({ status }) => (
+  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+    status === "approved" ? "bg-green-900/40 text-green-400" :
+    status === "pending" ? "bg-yellow-900/40 text-yellow-400" :
+    "bg-red-900/40 text-red-400"
+  }`}>
+    {status}
+  </span>
+);
+
+const ApproveButton = ({ loanId, onClick }) => (
+  <button
+    onClick={() => onClick(loanId)}
+    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-gray-100 py-3 px-6 rounded-xl transition-all duration-300"
+  >
+    Approve Application
+  </button>
+);
 
 export default UserLoanApplications;

@@ -1,8 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getFirestore, doc, getDoc, updateDoc, deleteDoc, setDoc, Timestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { Card, CardContent, Typography, Button, CircularProgress, Box, TextField, MenuItem, Alert } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CircularProgress,
+  Box,
+  TextField,
+  MenuItem,
+  Alert,
+} from "@mui/material";
 
 const LoanApproval = () => {
   const { loanId } = useParams();
@@ -19,9 +37,8 @@ const LoanApproval = () => {
   const [emiCreated, setEmiCreated] = useState(false);
   const [interestRate, setInterestRate] = useState("");
   const [duration, setDuration] = useState("");
-  const [emiAmount, setEmiAmount] = useState(0);
+  const [emiAmount, setEmiAmount] = useState(""); // Changed to string to match Firestore storage
 
-  // 🔥 Fetch User Role from Firestore
   const checkAdminRole = async () => {
     const user = auth.currentUser;
     if (!user) {
@@ -50,7 +67,7 @@ const LoanApproval = () => {
   useEffect(() => {
     const fetchLoanDetails = async () => {
       setLoading(true);
-      await checkAdminRole(); // Check admin status
+      await checkAdminRole();
 
       try {
         const loanRef = doc(db, "applications", loanId);
@@ -73,47 +90,47 @@ const LoanApproval = () => {
     fetchLoanDetails();
   }, [loanId, db, auth, navigate]);
 
-  // 💡 Create EMI and Store in Firestore
   const handleCreateEMI = async () => {
     if (!interestRate || !duration) {
       setError("Please select both interest rate and duration.");
       return;
     }
-  
-    const principal = loan.loanAmount.toString(); // Ensure principal is saved as string
-    const rate = (parseFloat(interestRate) / 100 / 12).toString();
-    const n = parseInt(duration).toString();
-  
-    const emi = (
-      (parseFloat(loan.loanAmount) * (parseFloat(interestRate) / 100 / 12) * Math.pow(1 + parseFloat(rate), parseInt(n))) /
-      (Math.pow(1 + parseFloat(rate), parseInt(n)) - 1)
-    ).toFixed(2);
-  
-    const emiAmount = emi.toString();
-    const approvedDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-  
+
+    const principal = parseFloat(loan.loanAmount);
+    const monthlyRate = parseFloat(interestRate) / 100 / 12;
+    const months = parseInt(duration);
+
+    // EMI calculation using the formula: [P × R × (1 + R)^N] / [(1 + R)^N - 1]
+    const emi =
+      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (Math.pow(1 + monthlyRate, months) - 1);
+    const calculatedEmi = emi.toFixed(2);
+
+    setEmiAmount(calculatedEmi); // Update state with calculated EMI
+
+    const approvedDate = new Date().toISOString().split("T")[0];
+
     try {
       const emiRef = doc(db, "emi", loanId);
       await setDoc(emiRef, {
         loanId: loan.id,
         userId: loan.userId,
         loanType: loan.loanType,
-        principal,                  // Save as string
-        interestRate: interestRate.toString(),   // Save as string
-        duration: duration.toString(),           // Save as string
-        emiAmount,                  // Save as string
-        approvedAt: approvedDate,   // Add approved date
+        principal: principal.toString(),
+        interestRate: interestRate.toString(),
+        duration: duration.toString(),
+        emiAmount: calculatedEmi,
+        approvedAt: approvedDate,
         status: "EMI Created",
       });
-  
+
       setEmiCreated(true);
     } catch (error) {
+      console.error("Error creating EMI:", error);
       setError("Failed to create EMI.");
     }
   };
-  
 
-  // ✅ Approve Loan with Approved Date
   const handleApproveLoan = async () => {
     if (!emiCreated) {
       setError("Please create EMI before approving the loan.");
@@ -122,37 +139,32 @@ const LoanApproval = () => {
 
     try {
       const loanRef = doc(db, "applications", loanId);
-      
-      // Get the current date
       const approvedDate = new Date();
-      
-      // Move the loan to 'loans' collection with EMI details and approved date
       const approvedLoanRef = doc(db, "loans", loanId);
+
       await setDoc(approvedLoanRef, {
         ...loan,
         status: "Approved",
-        approvedDate: Timestamp.fromDate(approvedDate),  // Save the current date
+        approvedDate: Timestamp.fromDate(approvedDate),
         emi: {
-          interestRate,
-          duration,
-          emiAmount,
+          interestRate: interestRate.toString(),
+          duration: duration.toString(),
+          emiAmount: emiAmount,
         },
       });
 
-      await deleteDoc(loanRef); // Remove from applications
+      await deleteDoc(loanRef);
       navigate("/admin-dashboard");
     } catch (error) {
+      console.error("Error approving loan:", error);
       setError("Error approving loan.");
     }
   };
 
-  // 🚫 Reject Loan
   const handleRejectLoan = async () => {
     try {
       const loanRef = doc(db, "applications", loanId);
       await updateDoc(loanRef, { status: "Rejected" });
-
-      // Navigate back to admin dashboard
       navigate("/admin-dashboard");
     } catch (error) {
       setError("Error rejecting loan.");
@@ -176,7 +188,6 @@ const LoanApproval = () => {
             <Typography>Amount: ₹{loan.loanAmount}</Typography>
             <Typography>Status: {loan.status}</Typography>
 
-            {/* EMI Creation Section */}
             {!emiCreated ? (
               <Box sx={{ marginTop: 4 }}>
                 <Typography variant="h5">Create EMI</Typography>
@@ -214,12 +225,25 @@ const LoanApproval = () => {
                   <MenuItem value="48">48 Months</MenuItem>
                 </TextField>
 
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                  <Button variant="contained" color="primary" onClick={handleCreateEMI}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleCreateEMI}
+                  >
                     Create EMI
                   </Button>
-
-                  <Button variant="contained" color="error" onClick={handleRejectLoan}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleRejectLoan}
+                  >
                     Reject Loan
                   </Button>
                 </Box>
@@ -233,12 +257,25 @@ const LoanApproval = () => {
                 <Typography>Interest Rate: {interestRate}%</Typography>
                 <Typography>Duration: {duration} months</Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                  <Button variant="contained" color="success" onClick={handleApproveLoan}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleApproveLoan}
+                  >
                     Approve Loan
                   </Button>
-
-                  <Button variant="contained" color="error" onClick={handleRejectLoan}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleRejectLoan}
+                  >
                     Reject Loan
                   </Button>
                 </Box>

@@ -166,7 +166,7 @@ const Profile = () => {
 
     const emiSchedule = [];
 
-    for (let i = 0; i < duration; i++) {
+    for (let i = 1; i < duration; i++) {
       const emiDate = new Date(startDate);
       emiDate.setMonth(emiDate.getMonth() + i);
       emiDate.setDate(10); // EMI due date: 10th of every month

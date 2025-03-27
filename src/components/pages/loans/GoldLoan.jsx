@@ -2,6 +2,7 @@
 
 import { Link } from "react-router-dom";
 import goldloanimg from "../../../assets/gold-lone.avif";
+import goldLoanFoarm from "../../../assets/life comrade microfinserve GOLD loan_form.pdf";
 
 function GoldLoan() {
   return (
@@ -30,7 +31,7 @@ function GoldLoan() {
               Learn More
             </a>
             <a
-              href="/learn-more"
+              href={goldLoanFoarm}
               className="px-6 py-3 border border-cyan-500 hover:bg-cyan-500 transition duration-300 rounded-full text-cyan-500 hover:text-white font-semibold shadow-lg"
             >
               Download Form

@@ -3,6 +3,7 @@
 
 import { Link } from "react-router-dom";
 import personalLoanImg from "../../../assets/personal loan.webp";
+import personalLoanForm from "../../../assets/life comrade microfinserve personal Loan_Form.pdf";
 function PersonalLoan() {
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
@@ -28,7 +29,7 @@ function PersonalLoan() {
               Learn More
             </a>
             <a
-              href="/"
+              href={personalLoanForm}
               className="px-6 py-3 border border-cyan-500 hover:bg-cyan-500 transition duration-300 rounded-full text-cyan-500 hover:text-white font-semibold shadow-lg"
             >
              Download Form 

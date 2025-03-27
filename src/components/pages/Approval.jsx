@@ -7,6 +7,8 @@ import {
   updateDoc,
   deleteDoc,
   setDoc,
+  collection,
+  addDoc,
   Timestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -21,6 +23,7 @@ import {
   MenuItem,
   Alert,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 const LoanApproval = () => {
   const { loanId } = useParams();
@@ -37,7 +40,7 @@ const LoanApproval = () => {
   const [emiCreated, setEmiCreated] = useState(false);
   const [interestRate, setInterestRate] = useState("");
   const [duration, setDuration] = useState("");
-  const [emiAmount, setEmiAmount] = useState(""); // Changed to string to match Firestore storage
+  const [emiAmount, setEmiAmount] = useState("");
 
   const checkAdminRole = async () => {
     const user = auth.currentUser;
@@ -95,23 +98,45 @@ const LoanApproval = () => {
       setError("Please select both interest rate and duration.");
       return;
     }
-
+  
     const principal = parseFloat(loan.loanAmount);
     const monthlyRate = parseFloat(interestRate) / 100 / 12;
     const months = parseInt(duration);
-
-    // EMI calculation using the formula: [P × R × (1 + R)^N] / [(1 + R)^N - 1]
-    const emi =
-      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-      (Math.pow(1 + monthlyRate, months) - 1);
+  
+    // EMI calculation formula
+    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                (Math.pow(1 + monthlyRate, months) - 1);
     const calculatedEmi = emi.toFixed(2);
-
-    setEmiAmount(calculatedEmi); // Update state with calculated EMI
-
-    const approvedDate = new Date().toISOString().split("T")[0];
-
+  
+    setEmiAmount(calculatedEmi);
+    const approvedDate = new Date();
+  
     try {
+      // 1. Save EMI details in 'emi' collection
       const emiRef = doc(db, "emi", loanId);
+      
+      // Create installments array first
+      const installments = [];
+      let currentDate = new Date(approvedDate);
+      
+      for (let i = 1; i <= months; i++) {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        const dueDate = new Date(currentDate);
+        
+        installments.push({
+          installmentNo: i,
+          amount: calculatedEmi,
+          originalAmount: calculatedEmi, // Store original amount
+          dueDate: dueDate,
+          status: "pending",
+          lateFee: "0.00", // Initialize late fee
+          totalPayable: calculatedEmi, // Will update if late
+          paidAt: null,
+          paymentId: null
+        });
+      }
+  
+      // Save EMI document with installments array
       await setDoc(emiRef, {
         loanId: loan.id,
         userId: loan.userId,
@@ -121,13 +146,28 @@ const LoanApproval = () => {
         duration: duration.toString(),
         emiAmount: calculatedEmi,
         approvedAt: approvedDate,
-        status: "EMI Created",
+        status: "active",
+        installments: installments, // Store installments array in EMI doc
+        totalPaid: "0.00",
+        remainingAmount: (emi * months).toFixed(2)
       });
-
+  
+      // 2. Also save installments as subcollection for easier individual access
+      const installmentsRef = collection(db, `emi/${loanId}/installments`);
+      
+      for (const installment of installments) {
+        await addDoc(installmentsRef, {
+          ...installment,
+          dueDate: installment.dueDate, // Firestore will convert Date object
+        });
+      }
+  
       setEmiCreated(true);
+      toast.success("EMI schedule created successfully!");
+      
     } catch (error) {
-      console.error("Error creating EMI:", error);
-      setError("Failed to create EMI.");
+      console.error("Error creating EMI and installments:", error);
+      setError("Failed to create EMI. Please try again.");
     }
   };
 
@@ -154,6 +194,7 @@ const LoanApproval = () => {
       });
 
       await deleteDoc(loanRef);
+      alert("Congratulations! Loan approved successfully.");
       navigate("/admin-dashboard");
     } catch (error) {
       console.error("Error approving loan:", error);
@@ -203,10 +244,6 @@ const LoanApproval = () => {
                   <MenuItem value="10">10%</MenuItem>
                   <MenuItem value="12">12%</MenuItem>
                   <MenuItem value="15">15%</MenuItem>
-                  <MenuItem value="17">17%</MenuItem>
-                  <MenuItem value="19">19%</MenuItem>
-                  <MenuItem value="20">20%</MenuItem>
-                  <MenuItem value="22">22%</MenuItem>
                 </TextField>
 
                 <TextField
@@ -221,8 +258,6 @@ const LoanApproval = () => {
                   <MenuItem value="6">6 Months</MenuItem>
                   <MenuItem value="12">12 Months</MenuItem>
                   <MenuItem value="24">24 Months</MenuItem>
-                  <MenuItem value="36">36 Months</MenuItem>
-                  <MenuItem value="48">48 Months</MenuItem>
                 </TextField>
 
                 <Box
@@ -254,8 +289,6 @@ const LoanApproval = () => {
                   EMI Created Successfully
                 </Typography>
                 <Typography>EMI Amount: ₹{emiAmount}</Typography>
-                <Typography>Interest Rate: {interestRate}%</Typography>
-                <Typography>Duration: {duration} months</Typography>
 
                 <Box
                   sx={{
@@ -270,13 +303,6 @@ const LoanApproval = () => {
                     onClick={handleApproveLoan}
                   >
                     Approve Loan
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleRejectLoan}
-                  >
-                    Reject Loan
                   </Button>
                 </Box>
               </Box>

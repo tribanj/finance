@@ -27,6 +27,7 @@ import PersonalLoanForm from "./components/pages/loans/PersonalLoanForm.jsx";
 import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRoute
 import UserLoanApplications from "./components/pages/UserLoanApplications.jsx";
 import LoanApproval from "./components/pages/Approval.jsx";
+import PaymentsPage from "./components/pages/PaymentsPage.jsx";
 
 function App() {
   // const [darkMode, setDarkMode] = useState(false);
@@ -40,7 +41,6 @@ function App() {
 
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
-
 
   return (
     <Router>
@@ -92,9 +92,8 @@ function App() {
             {/* User Pages */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/loan-types" element={<AllLoans />} />
-
-         
-                <Route path="/admin-dashboard" element={<Dashboard />} />
+            <Route path="/payment/:loanId/:installmentId" element={<PaymentsPage />} />
+            <Route path="/admin-dashboard" element={<Dashboard />} />
 
             <Route
               element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
@@ -105,10 +104,11 @@ function App() {
                 <Route path="home" element={<HomeLoanForm />} />
                 <Route path="gold" element={<GoldLoanForm />} />
               </Route>
-              <Route path="/admin/user-loan/:userId" element={<UserLoanApplications />} />
+              <Route
+                path="/admin/user-loan/:userId"
+                element={<UserLoanApplications />}
+              />
               <Route path="/loan-approval/:loanId" element={<LoanApproval />} />
-
-
             </Route>
 
             {/* 404 Route */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import useAdminCheck from "../../hooks/useAdminCheck"; // Import the admin check hook
+import useAdminCheck from "../../hooks/useAdminCheck";
 import {
   Box,
   Typography,
@@ -14,6 +14,7 @@ import {
   Grid,
   Button,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import {
   People as UsersIcon,
@@ -21,23 +22,26 @@ import {
   Notifications as NotificationsIcon,
   Paid as PaymentsIcon,
   CheckCircle as ApprovedIcon,
+  Verified as VerifiedIcon,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import Loading from "../../Loadder";
+import AdminPaymentVerification from "./AdminPaymentVerification";
 
 const Dashboard = () => {
-  const isAdmin = useAdminCheck(); // Check if the user is an admin
+  const isAdmin = useAdminCheck();
   const [users, setUsers] = useState([]);
   const [pendingLoans, setPendingLoans] = useState([]);
   const [approvedLoans, setApprovedLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("users"); // Default active tab
+  const [activeTab, setActiveTab] = useState("users");
 
   useEffect(() => {
     if (isAdmin) {
       fetchData();
     } else {
-      setLoading(false); // Stop loading if user is not admin
+      setLoading(false);
     }
   }, [isAdmin]);
 
@@ -57,7 +61,6 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch all users
   const fetchUsers = async () => {
     try {
       const usersSnapshot = await getDocs(collection(db, "users"));
@@ -72,7 +75,6 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch pending loan applications
   const fetchPendingLoans = async () => {
     try {
       const loansQuery = query(
@@ -91,7 +93,6 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch approved loans
   const fetchApprovedLoans = async () => {
     try {
       const loansSnapshot = await getDocs(collection(db, "loans"));
@@ -100,24 +101,35 @@ const Dashboard = () => {
         ...doc.data(),
       }));
       setApprovedLoans(approvedLoansList);
-      // console.log("============>", approvedLoansList);
     } catch (error) {
       setError("Error fetching approved loans.");
       console.error("Error fetching approved loans:", error);
     }
   };
 
-  // Calculate statistics
   const totalUsers = users.length;
   const totalPendingLoans = pendingLoans.length;
   const totalApprovedLoans = approvedLoans.length;
   const totalDisbursedAmount = approvedLoans.reduce(
-    (sum, loan) => sum + loan.amount,
+    (sum, loan) => sum + (loan.amount || 0),
     0
   );
 
   if (!isAdmin) {
-    return <p>Access Denied. You must be an admin to view this page.</p>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        flexDirection="column"
+      >
+        <Loading />
+        <Typography variant="h6" mt={2}>
+          Access Denied! You are not an admin
+        </Typography>
+      </Box>
+    );
   }
 
   if (loading) {
@@ -134,7 +146,16 @@ const Dashboard = () => {
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
   }
 
   return (
@@ -160,6 +181,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab("users")}
               sx={{
                 bgcolor: activeTab === "users" ? "#334155" : "transparent",
+                "&:hover": { bgcolor: "#334155", cursor: "pointer" },
               }}
             >
               <ListItemIcon>
@@ -172,6 +194,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab("loans")}
               sx={{
                 bgcolor: activeTab === "loans" ? "#334155" : "transparent",
+                "&:hover": { bgcolor: "#334155", cursor: "pointer" },
               }}
             >
               <ListItemIcon>
@@ -184,12 +207,13 @@ const Dashboard = () => {
               onClick={() => setActiveTab("payments")}
               sx={{
                 bgcolor: activeTab === "payments" ? "#334155" : "transparent",
+                "&:hover": { bgcolor: "#334155", cursor: "pointer" },
               }}
             >
               <ListItemIcon>
                 <PaymentsIcon sx={{ color: "white" }} />
               </ListItemIcon>
-              <ListItemText primary="Payments" />
+              <ListItemText primary="Payment Verifications" />
             </ListItem>
             <ListItem
               button
@@ -197,6 +221,7 @@ const Dashboard = () => {
               sx={{
                 bgcolor:
                   activeTab === "notifications" ? "#334155" : "transparent",
+                "&:hover": { bgcolor: "#334155", cursor: "pointer" },
               }}
             >
               <ListItemIcon>
@@ -209,6 +234,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab("approved")}
               sx={{
                 bgcolor: activeTab === "approved" ? "#334155" : "transparent",
+                "&:hover": { bgcolor: "#334155", cursor: "pointer" },
               }}
             >
               <ListItemIcon>
@@ -267,113 +293,140 @@ const Dashboard = () => {
         </Grid>
 
         {/* Tab Content */}
-        <Paper elevation={3} sx={{ p: 3 }}>
-          {activeTab === "users" && (
-            <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Users
+        {activeTab === "users" && (
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Users
+            </Typography>
+            <List>
+              {users.map((user) => (
+                <ListItem
+                  key={user.id}
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <ListItemText
+                    primary={user.email}
+                    secondary={
+                      <>
+                        <span>{`User Id: ${user.id}`} </span>
+                        <br />
+                        <span>
+                          {`User Name: ${user.firstName}  ${user.lastName}`}{" "}
+                        </span>
+                        <br />
+                        <span>{`Role: ${user.role}`}</span>
+                      </>
+                    }
+                  />
+                  {user.role !== "admin" && (
+                    <Button
+                      component={Link}
+                      to={`/admin/user-loan/${user.id}`}
+                      variant="contained"
+                      color="primary"
+                      sx={{ cursor: "pointer" }}
+                    >
+                      View Loan Application
+                    </Button>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
+
+        {activeTab === "loans" && (
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Pending Loan Applications
+            </Typography>
+            <List>
+              {pendingLoans.map((loan) => (
+                <ListItem key={loan.id} divider>
+                  <ListItemText
+                    primary={`User: ${loan.userId}`}
+                    secondary={
+                      <>
+                        <span>Amount: ₹{loan.loanAmount}</span>
+                        <br />
+                        <span>Status: {loan.email}</span>
+                        <br />
+                        <span>Loan Type: {loan.loanType}</span>
+                        <br />
+                        <span>
+                          Created At:{" "}
+                          {new Date(
+                            loan.createdAt.seconds * 1000
+                          ).toLocaleDateString()}
+                        </span>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
+
+        {activeTab === "payments" && (
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={3}
+            >
+              <Typography variant="h5" fontWeight="bold">
+                Payment Verifications
               </Typography>
-              <List>
-                {users.map((user) => (
-                  <ListItem
-                    key={user.id}
-                    sx={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <ListItemText
-                      primary={user.email}
-                      secondary={
-                        <>
-                          <span>{`User Id: ${user.id}`} </span>
-                          <br />
-                          <span>
-                            {`User Name: ${user.firstName}  ${user.lastName}`}{" "}
-                          </span>
-                          <br />
-                          <span>{`Role: ${user.role}`}</span>
-                        </>
-                      }
-                    />
-                    {/* View Loan Applications Button */}
-                    {user.role !== "admin" && (
-                      <Button
-                        component={Link}
-                        to={`/admin/user-loan/${user.id}`}
-                        variant="contained"
-                        color="primary"
-                      >
-                        View Loan Application
-                      </Button>
-                    )}
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-          {activeTab === "loans" && (
-            <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Pending Loan Applications
+              <Chip
+                label={`${pendingLoans.length} Pending`}
+                color="warning"
+                variant="outlined"
+              />
+            </Box>
+            <AdminPaymentVerification />
+            <Box mt={3}>
+              <Typography variant="body2" color="text.secondary">
+                Note: Verify payments by checking UTR numbers against bank
+                records
               </Typography>
-              <List>
-                {pendingLoans.map((loan) => (
-                  <ListItem key={loan.id} divider>
-                    <ListItemText
-                      primary={`User: ${loan.userId}`}
-                      secondary={
-                        <>
-                          <span>Amount: ₹{loan.loanAmount}</span>
-                          <br />
-                          <span>Status: {loan.email}</span>
-                          <br />
-                          <span>Loan Type: {loan.loanType}</span>
-                          <br />
-                          <span>
-                            Created At:{" "}
-                            {new Date(
-                              loan.createdAt.seconds * 1000
-                            ).toLocaleDateString()}
-                          </span>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-          {activeTab === "approved" && (
-            <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Approved Loans
-              </Typography>
-              <List>
-                {approvedLoans.map((loan) => (
-                  <ListItem key={loan.id}>
-                    <ListItemText
-                      primary={`User: ${loan.userId}`}
-                      secondary={
-                        <>
-                          {`Full Name:${loan.fullName} `}
-                          <br />
-                          {`Loan Type: ${loan.loanType}`}
-                          <br />
-                          {`Amount: ₹${loan.loanAmount}`} 
-                          <br />
-                          {`EmiAmount:${loan.emi.emiAmount}/per Month`}
-                          <br />
-                          {`Duration:${loan.emi.duration} Months`}
-                          <br />
-                          {`Intrest Rate:${loan.emi.interestRate}`}
-                          <br />
-                        </>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-        </Paper>
+            </Box>
+          </Paper>
+        )}
+
+        {activeTab === "approved" && (
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Approved Loans
+            </Typography>
+            <List>
+              {approvedLoans.map((loan) => (
+                <ListItem key={loan.id}>
+                  <ListItemText
+                    primary={`User: ${loan.userId}`}
+                    secondary={
+                      <>
+                        {`Full Name:${loan.fullName} `}
+                        <br />
+                        {`Loan Type: ${loan.loanType}`}
+                        <br />
+                        {`Amount: ₹${loan.loanAmount}`}
+                        <br />
+                        {`EmiAmount:${loan.emi?.emiAmount || "N/A"}/per Month`}
+                        <br />
+                        {`Duration:${loan.emi?.duration || "N/A"} Months`}
+                        <br />
+                        {`Interest Rate:${loan.emi?.interestRate || "N/A"}`}
+                        <br />
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
       </Box>
     </Box>
   );

@@ -326,10 +326,10 @@ const Profile = () => {
                            Loan Amount: ₹{loan.loanAmount}
                         </h3>
                         <p className="text-sm text-white/70">
-                          Approved on: {formatDate(loan.approvedDate)}
+                        •  Approved on: {formatDate(loan.approvedDate)}
                         </p>
                         <p className="text-sm text-white/70">
-                          Interest Rate: {loan.emi.interestRate}% • Duration:{" "}
+                         • Duration:{" "}
                           {loan.emi.duration} months
                         </p>
                       </div>

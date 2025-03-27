@@ -272,7 +272,13 @@ const PaymentsPage = () => {
                   <p className="text-xs text-gray-300 mt-2">Scan with any UPI app to pay ₹{formattedAmount}</p>
                   <div className="mt-3 p-2 bg-white/20 rounded border border-white/30">
                     <p className="text-xs font-medium text-gray-300">UPI ID:</p>
-                    <p className="text-sm font-mono text-white">yourbankupi@upi</p>
+                    <p className="text-sm font-mono text-white">ravikants63@fifederal</p>
+                  </div>
+                  <div className="mt-3 p-2 bg-white/20 rounded border border-white/30">
+                    <p className="text-xs font-medium text-gray-300">Account details:</p>
+                    <p className="text-sm font-mono text-white"> Account number: 55550129597363</p>
+                    <p className="text-sm font-mono text-white">  IFSC: FDRL0005555 </p>
+                    <p className="text-sm font-mono text-white">  Beneficiary: Ravikant Sharma</p>
                   </div>
                 </div>
   

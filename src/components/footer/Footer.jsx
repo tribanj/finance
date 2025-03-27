@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="flex-1 space-y-4">
             <div className="flex items-center">
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-               <Logo />
+                <Logo />
               </span>
             </div>
             <p className="text-sm max-w-xs text-gray-400">
@@ -60,17 +60,26 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/faq" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                <Link
+                  to="/faq"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link to="/terms&condition" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                <Link
+                  to="/terms&condition"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">
+                <Link
+                  to="/privacy-policy"
+                  className="text-gray-400 hover:text-cyan-400 transition-colors text-sm"
+                >
                   Privacy Policy
                 </Link>
               </li>
@@ -84,14 +93,32 @@ const Footer = () => {
             </h3>
             <div className="flex space-x-4">
               {[
-                { icon: <FaFacebook />, label: "Facebook" },
-                { icon: <FaTwitter />, label: "Twitter" },
-                { icon: <FaInstagram />, label: "Instagram" },
-                { icon: <FaLinkedin />, label: "LinkedIn" }
+                {
+                  icon: <FaFacebook />,
+                  label: "Facebook",
+                  url: "https://www.facebook.com/share/1BJG4SVg19/",
+                },
+                {
+                  icon: <FaTwitter />,
+                  label: "Twitter",
+                  url: "https://twitter.com/",
+                },
+                {
+                  icon: <FaInstagram />,
+                  label: "Instagram",
+                  url: "https://www.instagram.com/lc_microfinserv?igsh=cXVyNGVjcWg3ZG56",
+                },
+                {
+                  icon: <FaLinkedin />,
+                  label: "LinkedIn",
+                  url: "https://www.linkedin.com/",
+                },
               ].map((social, index) => (
                 <a
                   key={index}
-                  href="https://www.instagram.com/lc_microfinserv?igsh=cXVyNGVjcWg3ZG56"
+                  href={social.url} 
+                  target="_blank"
+                  rel="noopener noreferrer" 
                   className="text-gray-400 hover:text-cyan-400 transition-colors"
                   aria-label={social.label}
                 >

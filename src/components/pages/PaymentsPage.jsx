@@ -163,7 +163,7 @@ const PaymentsPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-violet-800 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="max-w-4xl mx-auto w-full">
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/20 transform transition-all hover:scale-[1.02] duration-300 relative">
+        <div className="bg-white/10 rounded-2xl shadow-2xl overflow-hidden border border-white/20 transform transition-all hover:scale-[1.02] duration-300 relative">
           {/* Floating Particles */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(20)].map((_, i) => (

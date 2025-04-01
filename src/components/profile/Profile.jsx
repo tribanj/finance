@@ -23,6 +23,7 @@ const Profile = () => {
   const [payments, setPayments] = useState([]);
   const [emiSchedules, setEmiSchedules] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [pendingPage, setPendingPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
   const { loanId, emiId } = useParams();
@@ -130,16 +131,15 @@ const Profile = () => {
           const applicationsRef = collection(db, "applications");
           const pendingQuery = query(
             applicationsRef,
-            where("userId", "==", user.uid),
-            where("status", "==", "pending")
+            where("userId", "==", user.uid)
           );
           const pendingSnapshot = await getDocs(pendingQuery);
-          setLoanApplications(
-            pendingSnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }))
-          );
+          const pendingLoans = pendingSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            appliedAt: doc.data().appliedAt?.toDate?.() || doc.data().appliedAt,
+          }));
+          setLoanApplications(pendingLoans);
 
           // Fetch payment records
           const paymentsRef = collection(db, "payments");
@@ -211,9 +211,19 @@ const Profile = () => {
     return allEMIs.slice(startIndex, endIndex);
   };
 
+  const paginatedPendingLoans = () => {
+    const startIndex = (pendingPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return loanApplications.slice(startIndex, endIndex);
+  };
+
   const totalPages = (loanId) => {
     const allEMIs = emiSchedules[loanId] || [];
     return Math.ceil(allEMIs.length / itemsPerPage);
+  };
+
+  const totalPendingPages = () => {
+    return Math.ceil(loanApplications.length / itemsPerPage);
   };
 
   const formatDate = (date) => {
@@ -223,6 +233,19 @@ const Profile = () => {
       return d.toLocaleDateString("en-IN");
     } catch {
       return "Invalid Date";
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return "bg-yellow-500/20 text-yellow-300";
+      case "approved":
+        return "bg-green-500/20 text-green-300";
+      case "rejected":
+        return "bg-red-500/20 text-red-300";
+      default:
+        return "bg-gray-500/20 text-gray-300";
     }
   };
 
@@ -309,6 +332,74 @@ const Profile = () => {
               {isAdmin ? "Admin Dashboard" : "Your Loan Dashboard"}
             </h2>
 
+            {/* Pending Loan Applications Section */}
+            {!isAdmin && loanApplications.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Pending Loan Applications
+                </h3>
+                <div className="space-y-3">
+                  {paginatedPendingLoans().map((application) => (
+                    <div
+                      key={application.id}
+                      className="p-4 rounded-xl bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:scale-[1.01]"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-white">
+                            {application.loanType}
+                          </p>
+                          <p className="text-sm text-white/70">
+                            Amount: ₹{application.loanAmount}
+                          </p>
+                          <p className="text-sm text-white/70">
+                            Applied on: {formatDate(application.appliedAt)}
+                          </p>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                            application.status
+                          )}`}
+                        >
+                          {application.status?.toUpperCase() || "PENDING"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination for pending loans */}
+                {totalPendingPages() > 1 && (
+                  <div className="flex justify-center gap-2 mt-6">
+                    <button
+                      onClick={() =>
+                        setPendingPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={pendingPage === 1}
+                      className="px-4 py-2 bg-white/10 rounded-lg text-white disabled:opacity-50 hover:bg-white/20 transition"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-4 py-2 text-white">
+                      Page {pendingPage} of {totalPendingPages()}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setPendingPage((prev) =>
+                          Math.min(prev + 1, totalPendingPages())
+                        )
+                      }
+                      disabled={pendingPage === totalPendingPages()}
+                      className="px-4 py-2 bg-white/10 rounded-lg text-white disabled:opacity-50 hover:bg-white/20 transition"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Approved Loans Section */}
             {!isAdmin && approvedLoans.length > 0 ? (
               approvedLoans.map((loan) => {
                 const loanEMIs = emiSchedules[loan.id] || [];
@@ -321,16 +412,13 @@ const Profile = () => {
                     <div className="flex justify-between items-center mb-4">
                       <div>
                         <h3 className="text-xl font-semibold text-white">
-                          Loan Type:{loan.loanType},
-                          <br/>
-                           Loan Amount: ₹{loan.loanAmount}
+                          Loan Type: {loan.loanType}, Amount: ₹{loan.loanAmount}
                         </h3>
                         <p className="text-sm text-white/70">
-                        •  Approved on: {formatDate(loan.approvedDate)}
+                          Approved on: {formatDate(loan.approvedDate)}
                         </p>
                         <p className="text-sm text-white/70">
-                         • Duration:{" "}
-                          {loan.emi.duration} months
+                          Duration: {loan.emi.duration} months
                         </p>
                       </div>
                       <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
@@ -441,7 +529,7 @@ const Profile = () => {
                   </div>
                 );
               })
-            ) : (
+            ) : !isAdmin && loanApplications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-24 h-24 mb-4 bg-white/10 rounded-full flex items-center justify-center">
                   <svg
@@ -460,30 +548,52 @@ const Profile = () => {
                   </svg>
                 </div>
                 <h3 className="text-xl font-medium text-white mb-2">
-                  {isAdmin ? "Admin Dashboard Access" : "No Active Loans"}
+                  No Active Loans
                 </h3>
                 <p className="text-white/60 max-w-md">
-                  {isAdmin
-                    ? "You're logged in as an administrator. Access the admin dashboard to manage loan applications."
-                    : "You don't have any active loans yet. Apply for a new loan to see your EMI schedule here."}
+                  You don't have any active loans yet. Apply for a new loan to
+                  see your EMI schedule here.
                 </p>
-                {isAdmin ? (
-                  <button
-                    onClick={handleNavigateToAdmin}
-                    className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-fuchsia-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
-                  >
-                    Go to Admin Dashboard
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleApplyForLoan}
-                    className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
-                  >
-                    Apply for Loan
-                  </button>
-                )}
+                <button
+                  onClick={handleApplyForLoan}
+                  className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
+                >
+                  Apply for Loan
+                </button>
               </div>
-            )}
+            ) : isAdmin ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-24 h-24 mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-white/50"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-medium text-white mb-2">
+                  Admin Dashboard Access
+                </h3>
+                <p className="text-white/60 max-w-md">
+                  You're logged in as an administrator. Access the admin
+                  dashboard to manage loan applications.
+                </p>
+                <button
+                  onClick={handleNavigateToAdmin}
+                  className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-fuchsia-600 rounded-xl text-white font-medium hover:shadow-lg transition-all"
+                >
+                  Go to Admin Dashboard
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

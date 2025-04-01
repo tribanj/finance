@@ -34,7 +34,7 @@ const UserLoanApplications = () => {
           ...doc.data(),
         }));
 
-        console.log("Fetched loan applications:", loans);
+        // console.log("Fetched loan applications:", loans);
         setApplications(loans);
       } catch (error) {
         console.error("Error fetching loan applications:", error);

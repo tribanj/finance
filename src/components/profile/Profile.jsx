@@ -137,7 +137,7 @@ const Profile = () => {
           const pendingLoans = pendingSnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-            appliedAt: doc.data().appliedAt?.toDate?.() || doc.data().appliedAt,
+            createdAt: doc.data().createdAt?.toDate?.() || doc.data().createdAt,
           }));
           setLoanApplications(pendingLoans);
 

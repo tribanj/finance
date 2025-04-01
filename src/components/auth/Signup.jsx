@@ -33,7 +33,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const role = formData.email === "admin@lcmf.com" ? "admin" : "user";
+      const role = formData.email === "lifecomrademf143@gmail.com" ? "admin" : "user";
 
       // Create user with Firebase Auth (password is automatically hashed)
       const userCredential = await createUserWithEmailAndPassword(

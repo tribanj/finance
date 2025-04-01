@@ -28,6 +28,7 @@ import PublicRoute from "./components/PublicRoute.jsx"; // <-- Import PublicRout
 import UserLoanApplications from "./components/pages/UserLoanApplications.jsx";
 import LoanApproval from "./components/pages/Approval.jsx";
 import PaymentsPage from "./components/pages/PaymentsPage.jsx";
+import UserDetailsPage from "./components/pages/UserDetailsPage.jsx";
 
 function App() {
   // const [darkMode, setDarkMode] = useState(false);
@@ -94,6 +95,8 @@ function App() {
             <Route path="/loan-types" element={<AllLoans />} />
             <Route path="/payment/:loanId/:installmentId" element={<PaymentsPage />} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
+            <Route path="/admin/user-details/:userId" element={<UserDetailsPage />} />
+
 
             <Route
               element={<ProtectedRoute isAuthenticated={isAuthenticated} />}

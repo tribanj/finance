@@ -302,33 +302,49 @@ const Dashboard = () => {
               {users.map((user) => (
                 <ListItem
                   key={user.id}
-                  sx={{ display: "flex", justifyContent: "space-between" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
                   <ListItemText
                     primary={user.email}
                     secondary={
                       <>
-                        <span>{`User Id: ${user.id}`} </span>
+                        <span>{`User Id: ${user.id}`}</span>
                         <br />
-                        <span>
-                          {`User Name: ${user.firstName}  ${user.lastName}`}{" "}
-                        </span>
+                        <span>{`User Name: ${user.firstName} ${user.lastName}`}</span>
                         <br />
                         <span>{`Role: ${user.role}`}</span>
                       </>
                     }
                   />
-                  {user.role !== "admin" && (
+                  <Box sx={{ display: "flex", gap: 2 }}>
+                    {/* View Loan Application Button */}
+                    {user.role !== "admin" && (
+                      <Button
+                        component={Link}
+                        to={`/admin/user-loan/${user.id}`}
+                        variant="contained"
+                        color="primary"
+                        sx={{ cursor: "pointer" }}
+                      >
+                        View Loan Application
+                      </Button>
+                    )}
+
+                    {/* See User Details Button */}
                     <Button
                       component={Link}
-                      to={`/admin/user-loan/${user.id}`}
+                      to={`/admin/user-details/${user.id}`}
                       variant="contained"
-                      color="primary"
+                      color="secondary"
                       sx={{ cursor: "pointer" }}
                     >
-                      View Loan Application
+                      See User Details
                     </Button>
-                  )}
+                  </Box>
                 </ListItem>
               ))}
             </List>
